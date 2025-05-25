@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poultry_manager/modules/dashboard/flok_card.dart';
+import 'package:poultry_manager/modules/dashboard/flok_details_screen.dart';
 import 'dashboard_controller.dart';
 
 class DashboardView extends GetView<DashboardController> {
@@ -52,20 +54,22 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget _buildFlockList() {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: controller.flocks.length,
-        itemBuilder: (context, index) {
-          final flock = controller.flocks[index];
-          return ListTile(
-            title: Text(flock.name),
-            subtitle: Text('Birds: ${flock.count}, Type: ${flock.birdType}'),
-            trailing: Text('Added: ${flock.date}'),
-          );
-        },
-      ),
-    );
-  }
+  return Expanded(
+    child: Obx(() => ListView.builder(
+      itemCount: controller.flocks.length,
+      itemBuilder: (context, index) {
+        final flock = controller.flocks[index];
+        return FlockCard(
+          flock: flock,
+          onTap: () => Get.to(
+            () => FlockDetailsView(flock: flock),
+            fullscreenDialog: true,
+          ),
+        );
+      },
+    )),
+  );
+}
 
   Widget _buildBottomNavBar() {
     return BottomNavigationBar(

@@ -44,19 +44,26 @@ class DashboardController extends GetxController {
   }
 
   void navigateToAddFlock() async {
-    final newFlock = await Get.to<Flock>(() => AddFlockView());
-    if (newFlock != null) {
-      flocks.add(newFlock);
-      localStorage.saveFlocks(flocks);
-      calculateSummary();
-      Get.snackbar(
-        'نجاح',
-        'تم إضافة القطيع بنجاح',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    }
+  final newFlock = await Get.to<Flock>(() => AddFlockView());
+  if (newFlock != null) {
+    flocks.add(newFlock);
+    localStorage.saveFlocks(flocks);
+    calculateSummary();
+    Get.snackbar('نجاح', 'تم إضافة القطيع بنجاح',
+        backgroundColor: Colors.green, colorText: Colors.white);
   }
+}
+
+void handleFlockUpdate(Flock updatedFlock) {
+  final index = flocks.indexWhere((f) => f.id == updatedFlock.id);
+  if (index != -1) {
+    flocks[index] = updatedFlock;
+    localStorage.saveFlocks(flocks);
+    calculateSummary();
+    Get.snackbar('نجاح', 'تم تحديث القطيع بنجاح',
+        backgroundColor: Colors.green, colorText: Colors.white);
+  }
+}
 
   void navigateTo(int index) {
     switch (index) {

@@ -1,3 +1,5 @@
+import 'package:poultry_manager/data/models/bird_modification.dart';
+
 class Flock {
   final String id;
   final String birdType;
@@ -9,11 +11,12 @@ class Flock {
   final double oneBirdCost;
   final double income;
   final double expense;
-
   final String paidTo;
   final String paymentMethod;
   final DateTime date;
   final String notes;
+  final List<BirdModification> modifications;
+
 
   Flock({
     required this.birdType,
@@ -29,6 +32,7 @@ class Flock {
     required this.paymentMethod,
     required this.date,
     required this.notes,
+    this.modifications = const [],
   }) : id = DateTime.now().millisecondsSinceEpoch.toString();
 
   Map<String, dynamic> toMap() {
@@ -47,7 +51,19 @@ class Flock {
       'paymentMethod': paymentMethod,
       'date': date.toIso8601String(),
       'notes': notes,
+      'modifications': modifications.map((mod) => mod.toMap()).toList(),
     };
+  }
+    int get currentCount {
+    int modifiedCount = count;
+    for (var mod in modifications) {
+      if (mod is BirdReduction) {
+        modifiedCount -= mod.count;
+      } else if (mod is BirdAddition) {
+        modifiedCount += mod.count;
+      }
+    }
+    return modifiedCount;
   }
 
   factory Flock.fromMap(Map<String, dynamic> map) {
@@ -65,6 +81,9 @@ class Flock {
       paymentMethod: map['paymentMethod'],
       date: DateTime.parse(map['date']),
       notes: map['notes'],
+       modifications: List<dynamic>.from(map['modifications'])
+          .map((m) => BirdModification.fromMap(m))
+          .toList(),
     );
   }
 }
