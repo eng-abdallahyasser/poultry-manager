@@ -29,47 +29,59 @@ class DashboardView extends GetView<DashboardController> {
   Widget _buildSummaryCards() {
     return Row(
       children: [
-        Expanded(child: _buildSummaryCard('Income', controller.income.value)),
-        Expanded(child: _buildSummaryCard('Expense', controller.expense.value)),
         Expanded(child: _buildSummaryCard('Profit', controller.profit.value)),
+        Expanded(
+          child: Column(
+            children: [
+              _buildSummaryCard('Expense', controller.expense.value),
+              _buildSummaryCard('Income', controller.income.value),
+            ],
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildSummaryCard(String title, double value) {
-    return Card(
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text(title, style: Get.textTheme.titleSmall),
-            Text(
-              '\$${value.toStringAsFixed(2)}',
-              style: Get.textTheme.headlineSmall,
-            ),
-          ],
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Text(title, style: Get.textTheme.titleSmall),
+              Text(
+                '\$${value.toStringAsFixed(2)}',
+                style: Get.textTheme.headlineSmall,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildFlockList() {
-  return Expanded(
-    child: Obx(() => ListView.builder(
-      itemCount: controller.flocks.length,
-      itemBuilder: (context, index) {
-        final flock = controller.flocks[index];
-        return FlockCard(
-          flock: flock,
-          onTap: () => Get.to(
-            () => FlockDetailsView(flock: flock),
-            fullscreenDialog: true,
-          ),
-        );
-      },
-    )),
-  );
-}
+    return Expanded(
+      child: Obx(
+        () => ListView.builder(
+          itemCount: controller.flocks.length,
+          itemBuilder: (context, index) {
+            final flock = controller.flocks[index];
+            return FlockCard(
+              flock: flock,
+              onTap:
+                  () => Get.to(
+                    () => FlockDetailsView(flock: flock),
+                    fullscreenDialog: true,
+                  ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 
   Widget _buildBottomNavBar() {
     return BottomNavigationBar(

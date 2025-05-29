@@ -25,6 +25,25 @@ class FlockDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildSummaryCard(
+                          "الربح",
+                          flock.income - flock.expense,
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildSummaryCard("المصروفات", flock.expense),
+                            const SizedBox(width: 16),
+                            _buildSummaryCard("الإيرادات", flock.income),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                   // Flock Basic Information Section
                   _buildSectionHeader('المعلومات الأساسية'),
                   _buildDetailCard([
@@ -39,7 +58,7 @@ class FlockDetailsView extends StatelessWidget {
                   // Financial Information Section
                   _buildSectionHeader('المعلومات المالية'),
                   _buildDetailCard([
-                    _buildDetailRow('المصروفات', '${flock.expense} جنيه'),
+                    _buildDetailRow('سعر الكتكوت', '${flock.oneBirdCost} جنيه'),
                     _buildDetailRow('دفع إلى', flock.paidTo),
                     _buildDetailRow('طريقة الدفع', flock.paymentMethod),
                   ]),
@@ -47,16 +66,20 @@ class FlockDetailsView extends StatelessWidget {
                   // Additional Information Section
                   _buildSectionHeader('معلومات إضافية'),
                   _buildDetailCard([
-                    _buildDetailRow('التحصينات', flock.fortifications.join(', ')),
+                    _buildDetailRow(
+                      'التحصينات',
+                      flock.fortifications.join(', '),
+                    ),
                     _buildDetailRow('تاريخ الإضافة', _formatDate(flock.date)),
                     if (flock.notes.isNotEmpty)
                       _buildDetailRow('ملاحظات', flock.notes),
                   ]),
 
                   // Modifications Section
-                  _buildSectionHeader('سجل التعديلات (${flock.modifications.length})'),
-                  if (flock.modifications.isEmpty)
-                    _buildEmptyModifications(),
+                  _buildSectionHeader(
+                    'سجل التعديلات (${flock.modifications.length})',
+                  ),
+                  if (flock.modifications.isEmpty) _buildEmptyModifications(),
                   if (flock.modifications.isNotEmpty)
                     ...flock.modifications.map(
                       (mod) => _buildModificationCard(mod),
@@ -76,8 +99,28 @@ class FlockDetailsView extends StatelessWidget {
             Get.back(result: updatedFlock);
           }
         },
-        child: const Icon(Icons.edit),
         backgroundColor: Colors.blue,
+        child: const Icon(Icons.edit),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard(String title, double value) {
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Text(title, style: Get.textTheme.titleSmall),
+              Text(
+                '\$${value.toStringAsFixed(2)}',
+                style: Get.textTheme.headlineSmall,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -102,9 +145,7 @@ class FlockDetailsView extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: children,
-        ),
+        child: Column(children: children),
       ),
     );
   }
@@ -144,9 +185,10 @@ class FlockDetailsView extends StatelessWidget {
 
   Widget _buildModificationCard(BirdModification mod) {
     final isAddition = mod is BirdAddition;
-    final icon = isAddition
-        ? const Icon(Icons.add_circle, color: Colors.green)
-        : const Icon(Icons.remove_circle, color: Colors.red);
+    final icon =
+        isAddition
+            ? const Icon(Icons.add_circle, color: Colors.green)
+            : const Icon(Icons.remove_circle, color: Colors.red);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -184,8 +226,7 @@ class FlockDetailsView extends StatelessWidget {
                 if (mod.color != null)
                   _buildModificationDetailRow('اللون', mod.color!),
                 if (mod.weight != null)
-                  _buildModificationDetailRow(
-                      'الوزن', '${mod.weight} كجم'),
+                  _buildModificationDetailRow('الوزن', '${mod.weight} كجم'),
                 if (mod.secretions != null)
                   _buildModificationDetailRow('الإفرازات', mod.secretions!),
               ],
@@ -208,18 +249,10 @@ class FlockDetailsView extends StatelessWidget {
             width: 80,
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 14))),
         ],
       ),
     );

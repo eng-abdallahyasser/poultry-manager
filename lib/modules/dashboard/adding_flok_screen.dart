@@ -112,7 +112,7 @@ class _AddFlockViewState extends State<AddFlockView> {
 
               // Expense
               _buildTextFormField(
-                label: 'المصروفات',
+                label: 'سعر الكاتكوت ',
                 keyboardType: TextInputType.number,
                 onSaved: (value) => oneBirdCost = value!,
                 validator:
