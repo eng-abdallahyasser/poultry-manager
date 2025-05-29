@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/flok.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,21 +18,26 @@ class LocalStorage extends GetxService {
       final flocksJson = jsonEncode(
         flocks.map((flock) => flock.toMap()).toList(),
       );
-      await _prefs.setString('flocks', flocksJson);
+      _prefs.setString('flocks', flocksJson);
+      log('Saved data: ${_prefs.getString('flocks')}');
+      Get.snackbar('Success', 'Flocks saved successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to save flocks: $e');
     }
   }
 
-  List<Flock>? getFlocks() {
+  List<Flock> getFlocks() {
     final flocksJson = _prefs.getString('flocks');
     if (flocksJson != null) {
-      final List<dynamic> jsonList = jsonDecode(
-        flocksJson,
-      ); // jsonDecode is now available
-      return jsonList.map((json) => Flock.fromMap(json)).toList();
+      try {
+        final List<dynamic> jsonList = jsonDecode(flocksJson);
+        return jsonList.map((json) => Flock.fromMap(json)).toList();
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to load flocks: $e');
+        return [];
+      }
     }
-    return null;
+    return [];
   }
 
   // Add other local storage methods as needed

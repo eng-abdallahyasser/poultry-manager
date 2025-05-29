@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/bird_modification.dart';
 import 'package:poultry_manager/data/models/flok.dart';
+import 'package:poultry_manager/modules/dashboard/dashboard_controller.dart';
 
 class ModifyBirdsView extends StatefulWidget {
   final Flock flock;
@@ -14,10 +17,11 @@ class ModifyBirdsView extends StatefulWidget {
 
 class _ModifyBirdsViewState extends State<ModifyBirdsView> {
   final _formKey = GlobalKey<FormState>();
-  final List<String> reductionReasons = ReductionReason.values
-      .map((e) => e.arabicName)
-      .toList();
-  
+  final List<String> reductionReasons =
+      ReductionReason.values.map((e) => e.arabicName).toList();
+
+      DashboardController controller = Get.find<DashboardController>();
+
   String modificationType = 'add';
   String count = '';
   ReductionReason? selectedReason;
@@ -47,7 +51,8 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
               _buildTextFormField(
                 label: 'العدد',
                 keyboardType: TextInputType.number,
-                validator: (value) => value!.isEmpty ? 'الرجاء إدخال العدد' : null,
+                validator:
+                    (value) => value!.isEmpty ? 'الرجاء إدخال العدد' : null,
                 onSaved: (value) => count = value!,
               ),
 
@@ -58,12 +63,14 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
                   items: reductionReasons,
                   onChanged: (value) {
                     setState(() {
-                      selectedReason = ReductionReason.values[
-                          reductionReasons.indexOf(value!)];
+                      selectedReason =
+                          ReductionReason.values[reductionReasons.indexOf(
+                            value!,
+                          )];
                     });
                   },
-                  validator: (value) =>
-                      value == null ? 'الرجاء اختيار السبب' : null,
+                  validator:
+                      (value) => value == null ? 'الرجاء اختيار السبب' : null,
                 ),
               ],
 
@@ -158,9 +165,7 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         ),
         keyboardType: keyboardType,
         maxLines: maxLines ?? 1,
@@ -181,16 +186,12 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        items: items.map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
+        items:
+            items.map((String value) {
+              return DropdownMenuItem<String>(value: value, child: Text(value));
+            }).toList(),
         onChanged: onChanged,
         validator: validator,
       ),
@@ -217,16 +218,12 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
         child: InputDecorator(
           decoration: InputDecoration(
             labelText: 'التاريخ',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "${selectedDate.toLocal()}".split(' ')[0],
-              ),
+              Text("${selectedDate.toLocal()}".split(' ')[0]),
               const Icon(Icons.calendar_today),
             ],
           ),
@@ -260,6 +257,7 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
 
       // Update the flock with the new modification
       final updatedFlock = Flock(
+        id: widget.flock.id,
         birdType: widget.flock.birdType,
         name: widget.flock.name,
         count: widget.flock.count,
@@ -277,7 +275,12 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
       );
 
       // Save and go back
-      Get.back(result: updatedFlock);
+      log('New modification: ${modification.toMap()}');
+      log(
+        'Updated flock has ${updatedFlock.modifications.length} modifications',
+      );
+
+      controller.navigateToFlockDetails(updatedFlock);
     }
   }
 }

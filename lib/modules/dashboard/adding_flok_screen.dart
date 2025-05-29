@@ -286,6 +286,7 @@ class _AddFlockViewState extends State<AddFlockView> {
       _formKey.currentState!.save();
 
       final newFlock = Flock(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
         birdType: selectedBirdType,
         name: flockName,
         count: int.parse(count),

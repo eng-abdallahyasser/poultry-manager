@@ -21,9 +21,7 @@ class DashboardController extends GetxController {
   void loadData() {
     // Load data from local storage
     final storedFlocks = localStorage.getFlocks();
-    if (storedFlocks != null) {
-      flocks.assignAll(storedFlocks);
-    }
+    flocks.assignAll(storedFlocks);
 
     calculateSummary();
   }
@@ -44,26 +42,41 @@ class DashboardController extends GetxController {
   }
 
   void navigateToAddFlock() async {
-  final newFlock = await Get.to<Flock>(() => AddFlockView());
-  if (newFlock != null) {
-    flocks.add(newFlock);
-    localStorage.saveFlocks(flocks);
-    calculateSummary();
-    Get.snackbar('نجاح', 'تم إضافة القطيع بنجاح',
-        backgroundColor: Colors.green, colorText: Colors.white);
+    final newFlock = await Get.to<Flock>(() => AddFlockView());
+    if (newFlock != null) {
+      flocks.add(newFlock);
+      localStorage.saveFlocks(flocks);
+      calculateSummary();
+      Get.snackbar(
+        'نجاح',
+        'تم إضافة القطيع بنجاح',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    }
   }
-}
 
-void handleFlockUpdate(Flock updatedFlock) {
-  final index = flocks.indexWhere((f) => f.id == updatedFlock.id);
-  if (index != -1) {
-    flocks[index] = updatedFlock;
-    localStorage.saveFlocks(flocks);
-    calculateSummary();
-    Get.snackbar('نجاح', 'تم تحديث القطيع بنجاح',
-        backgroundColor: Colors.green, colorText: Colors.white);
+  void navigateToFlockDetails(Flock updatedFlock) async {
+    final index = flocks.indexWhere((f) => f.id == updatedFlock.id);
+    if (index != -1) {
+      flocks[index] = updatedFlock;
+      localStorage.saveFlocks(flocks);
+      calculateSummary();
+      Get.snackbar(
+        'نجاح',
+        'تم تحديث القطيع بنجاح',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'خطأ',
+        'لم يتم العثور على القطيع المحدد',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
-}
 
   void navigateTo(int index) {
     switch (index) {
@@ -84,4 +97,6 @@ void handleFlockUpdate(Flock updatedFlock) {
         break;
     }
   }
+
+  void updateFlock(Flock updatedFlock) {}
 }

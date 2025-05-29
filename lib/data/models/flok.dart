@@ -19,6 +19,7 @@ class Flock {
 
 
   Flock({
+    required this.id,
     required this.birdType,
     required this.name,
     required this.count,
@@ -33,7 +34,7 @@ class Flock {
     required this.date,
     required this.notes,
     this.modifications = const [],
-  }) : id = DateTime.now().millisecondsSinceEpoch.toString();
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -68,6 +69,7 @@ class Flock {
 
   factory Flock.fromMap(Map<String, dynamic> map) {
     return Flock(
+      id: map['id'],
       birdType: map['birdType'],
       name: map['name'],
       count: map['count'],
@@ -81,7 +83,7 @@ class Flock {
       paymentMethod: map['paymentMethod'],
       date: DateTime.parse(map['date']),
       notes: map['notes'],
-       modifications: List<dynamic>.from(map['modifications'])
+       modifications: List<dynamic>.from(map['modifications']?? [])
           .map((m) => BirdModification.fromMap(m))
           .toList(),
     );
