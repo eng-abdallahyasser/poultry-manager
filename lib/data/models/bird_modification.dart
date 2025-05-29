@@ -2,13 +2,13 @@ abstract class BirdModification {
   final int count;
   final DateTime date;
   final String notes;
-  final double costPerBird;
+  final double cost;
 
   BirdModification({
     required this.count,
     required this.date,
     required this.notes,
-    this.costPerBird = 0.0,
+    this.cost = 0.0,
   });
 
   Map<String, dynamic> toMap();
@@ -27,7 +27,7 @@ class BirdAddition extends BirdModification {
     required super.count,
     required super.date,
     required super.notes,
-    super.costPerBird = 0.0,
+    super.cost = 0.0,
   });
 
   @override
@@ -37,7 +37,7 @@ class BirdAddition extends BirdModification {
       'count': count,
       'date': date.toIso8601String(),
       'notes': notes,
-      'costPerBird': costPerBird,
+      'cost': cost,
     };
   }
 
@@ -46,7 +46,7 @@ class BirdAddition extends BirdModification {
       count: map['count'],
       date: DateTime.parse(map['date']),
       notes: map['notes'],
-      costPerBird: map['costPerBird'],
+      cost: map['cost'],
     );
   }
 }
@@ -61,7 +61,7 @@ class BirdReduction extends BirdModification {
     required super.count,
     required super.date,
     required super.notes,
-    super.costPerBird = 0.0,
+    super.cost = 0.0,
     required this.reason,
     this.color,
     this.weight,
@@ -79,7 +79,7 @@ class BirdReduction extends BirdModification {
       'color': color,
       'weight': weight,
       'secretions': secretions,
-      'costPerBird': costPerBird,
+      'cost': cost,
     };
   }
 
@@ -94,7 +94,7 @@ class BirdReduction extends BirdModification {
       color: map['color'],
       weight: map['weight'],
       secretions: map['secretions'],
-      costPerBird: map['costPerBird'],
+      cost: map['cost'],
     );
   }
 }

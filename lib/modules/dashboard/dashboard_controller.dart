@@ -76,6 +76,8 @@ class DashboardController extends GetxController {
         colorText: Colors.white,
       );
     }
+    Get.back();
+    update();
   }
 
   void navigateTo(int index) {

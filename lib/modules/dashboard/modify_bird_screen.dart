@@ -20,12 +20,13 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
   final List<String> reductionReasons =
       ReductionReason.values.map((e) => e.arabicName).toList();
 
-      DashboardController controller = Get.find<DashboardController>();
+  DashboardController controller = Get.find<DashboardController>();
 
   String modificationType = 'add';
   String count = '';
   ReductionReason? selectedReason;
   String notes = '';
+  double? cost;
   String? color;
   double? weight;
   String? secretions;
@@ -55,6 +56,33 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
                     (value) => value!.isEmpty ? 'الرجاء إدخال العدد' : null,
                 onSaved: (value) => count = value!,
               ),
+              
+              // Row(
+              //   children: [
+              //     _buildTextFormField(
+              //       label: "التكلفة (اختياري)",
+              //       keyboardType: TextInputType.number,
+              //       onSaved:
+              //           (newValue) =>
+              //               cost = double.tryParse(newValue ?? ''),
+              //     ),
+              //     const SizedBox(width: 8),
+              //     _buildDropdownFormField(
+              //       label: "",
+              //       items: ["لكل طائر", " الكلية"],
+              //       onChanged: (value) {
+              //         setState(() {
+              //           if (value == "لكل طائر") {
+              //             cost =  (cost ?? 0.0)*(double.tryParse(count) ?? 0.0);
+              //           } 
+              //         });
+
+              //       },
+              //       validator: (value) =>
+              //           value == null ? 'الرجاء اختيار التكلفة' : null,
+              //     ),
+              //   ],
+              // ),
 
               // For reductions only
               if (modificationType == 'reduce') ...[
