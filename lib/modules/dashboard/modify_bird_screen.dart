@@ -26,6 +26,7 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
   String count = '';
   ReductionReason? selectedReason;
   String notes = '';
+  bool isCostPerBird = false;
   double? cost;
   String? color;
   double? weight;
@@ -56,33 +57,42 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
                     (value) => value!.isEmpty ? 'الرجاء إدخال العدد' : null,
                 onSaved: (value) => count = value!,
               ),
-              
-              // Row(
-              //   children: [
-              //     _buildTextFormField(
-              //       label: "التكلفة (اختياري)",
-              //       keyboardType: TextInputType.number,
-              //       onSaved:
-              //           (newValue) =>
-              //               cost = double.tryParse(newValue ?? ''),
-              //     ),
-              //     const SizedBox(width: 8),
-              //     _buildDropdownFormField(
-              //       label: "",
-              //       items: ["لكل طائر", " الكلية"],
-              //       onChanged: (value) {
-              //         setState(() {
-              //           if (value == "لكل طائر") {
-              //             cost =  (cost ?? 0.0)*(double.tryParse(count) ?? 0.0);
-              //           } 
-              //         });
 
-              //       },
-              //       validator: (value) =>
-              //           value == null ? 'الرجاء اختيار التكلفة' : null,
-              //     ),
-              //   ],
-              // ),
+              _buildTextFormField(
+                label: "التكلفة (اختياري)",
+                keyboardType: TextInputType.number,
+                onSaved: (newValue) => cost = double.tryParse(newValue ?? ''),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: "نوع التكلفة",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: "لكل طائر",
+                      child: Text("تكلفة كل طائر"),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: "التكلفة الكلية",
+                      child: Text("التكلفة الكلية"),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      if (value == "لكل طائر") {
+                        isCostPerBird = true;
+                      } else {
+                        isCostPerBird = false;
+                      }
+                    });
+                  },
+                ),
+              ),
 
               // For reductions only
               if (modificationType == 'reduce') ...[
@@ -270,12 +280,20 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
           count: int.parse(count),
           date: selectedDate,
           notes: notes,
+          cost:
+              (isCostPerBird && cost != null)
+                  ? cost! * int.parse(count)
+                  : cost!,
         );
       } else {
         modification = BirdReduction(
           count: int.parse(count),
           date: selectedDate,
           notes: notes,
+          cost:
+              (isCostPerBird && cost != null)
+                  ? cost! * int.parse(count)
+                  : cost!,
           reason: selectedReason!,
           color: color,
           weight: weight,

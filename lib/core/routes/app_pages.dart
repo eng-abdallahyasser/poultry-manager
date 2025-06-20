@@ -7,7 +7,7 @@ import 'package:poultry_manager/modules/splash_screen.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SPLASH;
+  static const initial = Routes.SPLASH;
 
   static final routes = [
     GetPage(
@@ -15,11 +15,7 @@ class AppPages {
       page: () => DashboardView(),
       binding: MainBinding(),
     ),
-    GetPage(
-    name: Routes.SPLASH,
-    page: () => const SplashView(),
-  ),
+    GetPage(name: Routes.SPLASH, page: () => const SplashView()),
     // Add other pages similarly
   ];
 }
-
