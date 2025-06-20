@@ -1,4 +1,5 @@
 import 'package:poultry_manager/data/models/bird_modification.dart';
+import 'package:poultry_manager/data/models/dialy_feeding.dart';
 
 class Flock {
   final String id;
@@ -16,7 +17,7 @@ class Flock {
   final DateTime date;
   final String notes;
   final List<BirdModification> modifications;
-
+  final List<DailyFeeding> feedingRecords;
 
   Flock({
     required this.id,
@@ -34,6 +35,7 @@ class Flock {
     required this.date,
     required this.notes,
     this.modifications = const [],
+    this.feedingRecords = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -53,9 +55,11 @@ class Flock {
       'date': date.toIso8601String(),
       'notes': notes,
       'modifications': modifications.map((mod) => mod.toMap()).toList(),
+      'feedingRecords': feedingRecords.map((x) => x.toMap()).toList(),
     };
   }
-    int get currentCount {
+
+  int get currentCount {
     int modifiedCount = count;
     for (var mod in modifications) {
       if (mod is BirdReduction) {
@@ -65,6 +69,10 @@ class Flock {
       }
     }
     return modifiedCount;
+  }
+
+  double get totalFeedCost {
+    return feedingRecords.fold(0, (sum, record) => sum + record.totalCost);
   }
 
   factory Flock.fromMap(Map<String, dynamic> map) {
@@ -83,9 +91,13 @@ class Flock {
       paymentMethod: map['paymentMethod'],
       date: DateTime.parse(map['date']),
       notes: map['notes'],
-       modifications: List<dynamic>.from(map['modifications']?? [])
-          .map((m) => BirdModification.fromMap(m))
-          .toList(),
+      modifications:
+          List<dynamic>.from(
+            map['modifications'] ?? [],
+          ).map((m) => BirdModification.fromMap(m)).toList(),
+      feedingRecords: List<DailyFeeding>.from(
+        map['feedingRecords']?.map((x) => DailyFeeding.fromMap(x)) ?? [],
+      ),
     );
   }
 }

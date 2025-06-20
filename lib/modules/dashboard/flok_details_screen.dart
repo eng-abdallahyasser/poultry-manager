@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/bird_modification.dart';
+import 'package:poultry_manager/data/models/dialy_feeding.dart';
 import 'package:poultry_manager/data/models/flok.dart';
+import 'package:poultry_manager/modules/dashboard/daily_feeding_form.dart';
 import 'package:poultry_manager/modules/dashboard/modify_bird_screen.dart';
 import 'package:intl/intl.dart'; // Add this import for date formatting
 
@@ -74,11 +76,21 @@ class FlockDetailsView extends StatelessWidget {
                     if (flock.notes.isNotEmpty)
                       _buildDetailRow('ملاحظات', flock.notes),
                   ]),
-
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildModifyBirdBtn(),
+                      const SizedBox(width: 16),
+                      _buildDailyFeedingBtn(),
+                      const SizedBox(width: 16),
+                      _buildBirdHealthBth()
+                    ],
+                  ),
                   // Modifications Section
                   _buildSectionHeader(
                     'سجل التعديلات (${flock.modifications.length})',
                   ),
+
                   if (flock.modifications.isEmpty) _buildEmptyModifications(),
                   if (flock.modifications.isNotEmpty)
                     ...flock.modifications.map(
@@ -90,17 +102,75 @@ class FlockDetailsView extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final updatedFlock = await Get.to<Flock>(
-            () => ModifyBirdsView(flock: flock),
-          );
-          if (updatedFlock != null) {
-            Get.back(result: updatedFlock);
-          }
-        },
+    );
+  }
+
+  Widget _buildBirdHealthBth() {
+    return ElevatedButton(
+      onPressed: () {
+        // Navigate to bird health screen
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.orange,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.health_and_safety, color: Colors.white),
+          SizedBox(width: 16),
+          Text('صحة الطيور', style: TextStyle(color: Colors.white)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDailyFeedingBtn() {
+    return ElevatedButton(
+      onPressed: ()  {
+         Get.to<Flock>(
+          () => DailyFeedingForm( onSave: (dailyFeeding){
+            flock.feedingRecords.add(dailyFeeding);
+            Get.back(result: flock);
+          },),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.fastfood, color: Colors.white),
+          SizedBox(width: 16),
+          Text('تغذية يومية', style: TextStyle(color: Colors.white)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModifyBirdBtn() {
+    return ElevatedButton(
+      onPressed: () async {
+        final updatedFlock = await Get.to<Flock>(
+          () => ModifyBirdsView(flock: flock),
+        );
+        if (updatedFlock != null) {
+          Get.back(result: updatedFlock);
+        }
+      },
+      style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue,
-        child: const Icon(Icons.edit),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.edit, color: Colors.white),
+          SizedBox(width: 16),
+          Text('تعديل الطيور', style: TextStyle(color: Colors.white)),
+        ],
       ),
     );
   }
