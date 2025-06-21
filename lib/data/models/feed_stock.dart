@@ -4,7 +4,7 @@ class FeedStock {
   final String id;
   final String feedCompany;
   final FeedType feedType;
-  final double quantity;
+  double quantity;
   final double costPerKg;
   final DateTime purchaseDate;
   final DateTime? expiryDate;

@@ -1,90 +1,158 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poultry_manager/data/local/feed_repo.dart';
 import 'package:poultry_manager/data/models/dialy_feeding.dart';
 import 'package:poultry_manager/data/models/feeding_type.dart';
-
+import 'package:poultry_manager/modules/dashboard/feed_type_chip.dart';
 
 class DailyFeedingForm extends StatefulWidget {
   final Function(DailyFeeding) onSave;
+  final FeedRepository feedRepo= Get.put(FeedRepository());
 
-  const DailyFeedingForm({super.key, required this.onSave});
+   DailyFeedingForm({
+    super.key, 
+    required this.onSave,
+  });
 
   @override
   State<DailyFeedingForm> createState() => _DailyFeedingFormState();
 }
 
 class _DailyFeedingFormState extends State<DailyFeedingForm> {
-  final _formKey = GlobalKey<FormState>();
-  final _quantityController = TextEditingController();
-  final _costController = TextEditingController();
-  String? _selectedCompany;
   FeedType? _selectedFeedType;
-  DateTime _selectedDate = DateTime.now();
-  final _notesController = TextEditingController();
+  String? _selectedCompany;
+  final TextEditingController _quantityController = TextEditingController();
+  List<FeedType> _availableFeedTypes = [];
+  List<String> _availableCompanies = [];
 
-  final List<String> _feedCompanies = ['شركة الأعلاف 1', 'شركة الأعلاف 2', 'شركة أخرى'];
-  final List<FeedType> _feedTypes = FeedType.values;
+  @override
+  void initState() {
+    super.initState();
+    _loadAvailableFeeds();
+  }
+
+  void _loadAvailableFeeds() {
+    setState(() {
+      _availableFeedTypes = widget.feedRepo.availableFeedTypes;
+      if (_availableFeedTypes.isNotEmpty) {
+        _selectedFeedType = _availableFeedTypes.first;
+        _updateAvailableCompanies();
+      }
+    });
+  }
+
+  void _updateAvailableCompanies() {
+    if (_selectedFeedType != null) {
+      setState(() {
+        _availableCompanies = widget.feedRepo
+            .getCompaniesForFeedType(_selectedFeedType!);
+        if (_availableCompanies.isNotEmpty) {
+          _selectedCompany = _availableCompanies.first;
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildDatePicker(),
-            const SizedBox(height: 16),
-            _buildFeedCompanyDropdown(),
-            const SizedBox(height: 16),
-            _buildFeedTypeDropdown(),
-            const SizedBox(height: 16),
-            // _buildQuantityField(),
-            // const SizedBox(height: 16),
-            // _buildCostField(),
-            // const SizedBox(height: 16),
-            // _buildNotesField(),
-            const SizedBox(height: 24),
-            _buildSaveButton(),
-          ],
+    if (_availableFeedTypes.isEmpty) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            children: [
+              const Text('لا يوجد علف متاح في المخزن'),
+              const SizedBox(height: 16),
+              const Text('الرجاء إضافة علف جديد قبل تسجيل التغذية اليومية.'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Get.toNamed('/add-feed');
+                },
+                child: const Text('إضافة علف جديد'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      body: Center(
+        child: Form(
+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildFeedTypeDropdown(),
+              const SizedBox(height: 16),
+              _buildFeedCompanyDropdown(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _quantityController,
+                decoration: const InputDecoration(
+                  labelText: 'الكمية (كجم)',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'الرجاء إدخال الكمية';
+                  }
+                  final quantity = double.tryParse(value);
+                  if (quantity == null || quantity <= 0) {
+                    return 'الرجاء إدخال كمية صحيحة';
+                  }
+                  return null;
+                },
+              ),
+              ElevatedButton(
+                onPressed: (){},
+                child: const Text('حفظ'),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDatePicker() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: 'تاريخ التغذية',
+  Widget _buildFeedTypeDropdown() {
+    return DropdownButtonFormField<FeedType>(
+      decoration: const InputDecoration(
+        labelText: 'نوع العلف',
         border: OutlineInputBorder(),
       ),
-      readOnly: true,
-      controller: TextEditingController(text: _selectedDate.toLocal().toString().split(' ')[0]),
-      onTap: () async {
-        final DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: _selectedDate,
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2101),
+      value: _selectedFeedType,
+      items: _availableFeedTypes.map((FeedType type) {
+        return DropdownMenuItem<FeedType>(
+          value: type,
+          child: Row(
+            children: [
+              FeedTypeChip(feedType: type),
+              const SizedBox(width: 8),
+              Text('(${widget.feedRepo.getStockQuantity(type)} كجم متاح)'),
+            ],
+          ),
         );
-        if (picked != null && picked != _selectedDate) {
-          setState(() {
-            _selectedDate = picked;
-          });
-        }
+      }).toList(),
+      onChanged: (FeedType? newValue) {
+        setState(() {
+          _selectedFeedType = newValue;
+          _updateAvailableCompanies();
+        });
       },
-      validator: (value) => value == null || value.isEmpty ? 'الرجاء اختيار تاريخ' : null,
+      validator: (value) => value == null ? 'الرجاء اختيار نوع العلف' : null,
     );
   }
 
   Widget _buildFeedCompanyDropdown() {
     return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        labelText: 'شركة الأعلاف',
+      decoration: const InputDecoration(
+        labelText: 'شركة العلف',
         border: OutlineInputBorder(),
       ),
       value: _selectedCompany,
-      items: _feedCompanies.map((String company) {
+      items: _availableCompanies.map((String company) {
         return DropdownMenuItem<String>(
           value: company,
           child: Text(company),
@@ -95,55 +163,8 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
           _selectedCompany = newValue;
         });
       },
-      validator: (value) => value == null ? 'الرجاء اختيار شركة الأعلاف' : null,
+      validator: (value) => value == null ? 'الرجاء اختيار الشركة' : null,
     );
   }
 
-  Widget _buildSaveButton() {
-    return ElevatedButton(
-      onPressed: _submitForm,
-      child: const Text('حفظ'),
-    );
-  }
-
-  Widget _buildFeedTypeDropdown() {
-    return DropdownButtonFormField<FeedType>(
-      decoration: InputDecoration(
-        labelText: 'نوع العلف',
-        border: OutlineInputBorder(),
-      ),
-      value: _selectedFeedType,
-      items: _feedTypes.map((FeedType type) {
-        return DropdownMenuItem<FeedType>(
-          value: type,
-          child: Text(type.arabicName),
-        );
-      }).toList(),
-      onChanged: (FeedType? newValue) {
-        setState(() {
-          _selectedFeedType = newValue;
-        });
-      },
-      validator: (value) => value == null ? 'الرجاء اختيار نوع العلف' : null,
-    );
-  }
-
-  // ... other form field builders ...
-
-  void _submitForm() {
-    if (_formKey.currentState!.validate() &&
-        _selectedCompany != null &&
-        _selectedFeedType != null) {
-      final feeding = DailyFeeding(
-        date: _selectedDate,
-        quantity: double.parse(_quantityController.text),
-        feedCompany: _selectedCompany!,
-        feedType: _selectedFeedType!,
-        notes: _notesController.text,
-        costPerKg: double.parse(_costController.text),
-      );
-      widget.onSave(feeding);
-      Get.back();
-    }
-  }
 }

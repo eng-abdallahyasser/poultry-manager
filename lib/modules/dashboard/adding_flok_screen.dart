@@ -39,9 +39,6 @@ class _AddFlockViewState extends State<AddFlockView> {
         title: const Text('إضافة قطيع جديد'),
         backgroundColor: Colors.blue, // Blue color
         centerTitle: true,
-        actions: [
-          IconButton(icon: const Icon(Icons.save), onPressed: _saveFlock),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -152,8 +149,24 @@ class _AddFlockViewState extends State<AddFlockView> {
                 maxLines: 3,
                 onSaved: (value) => notes = value ?? '',
               ),
+              // Save Button
+              _buildSaveButton(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: _saveFlock,
+        child: const Text('حفظ القطيع'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue, // Blue color
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          textStyle: const TextStyle(fontSize: 16),
         ),
       ),
     );

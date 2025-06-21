@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:poultry_manager/data/local/local_storge.dart';
+import 'package:poultry_manager/data/local/flock_repo.dart';
 import 'core/routes/app_pages.dart';
 
 void main() async {
