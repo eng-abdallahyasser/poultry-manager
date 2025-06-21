@@ -57,21 +57,20 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
   Widget build(BuildContext context) {
     if (_availableFeedTypes.isEmpty) {
       return Scaffold(
-        body: Center(
-          child: Column(
-            children: [
-              const Text('لا يوجد علف متاح في المخزن'),
-              const SizedBox(height: 16),
-              const Text('الرجاء إضافة علف جديد قبل تسجيل التغذية اليومية.'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Get.toNamed('/add-feed');
-                },
-                child: const Text('إضافة علف جديد'),
-              ),
-            ],
-          ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('لا يوجد علف متاح في المخزن'),
+            const SizedBox(height: 16),
+            const Text('الرجاء إضافة علف جديد قبل تسجيل التغذية اليومية.'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Get.toNamed('/add-feed');
+              },
+              child: const Text('إضافة علف جديد'),
+            ),
+          ],
         ),
       );
     }

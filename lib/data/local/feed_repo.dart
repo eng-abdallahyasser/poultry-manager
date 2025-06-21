@@ -11,6 +11,9 @@ class FeedRepository extends GetxService {
   List<FeedType> get availableFeedTypes => 
       _feedStocks.map((stock) => stock.feedType).toSet().toList();
 
+  Iterable<FeedStock> get feedStocks => 
+      _feedStocks.where((stock) => stock.quantity > 0);
+
   Future<FeedRepository> init() async {
     _prefs = await SharedPreferences.getInstance();
     _loadFromStorage();
