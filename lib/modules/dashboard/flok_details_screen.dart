@@ -3,13 +3,16 @@ import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/bird_modification.dart';
 import 'package:poultry_manager/data/models/flok.dart';
 import 'package:poultry_manager/modules/dashboard/daily_feeding_form.dart';
+import 'package:poultry_manager/modules/dashboard/dashboard_controller.dart';
 import 'package:poultry_manager/modules/dashboard/modify_bird_screen.dart';
 import 'package:intl/intl.dart'; // Add this import for date formatting
 
 class FlockDetailsView extends StatelessWidget {
   final Flock flock;
+  final DashboardController controller = Get.find<DashboardController>();
 
-  const FlockDetailsView({super.key, required this.flock});
+
+  FlockDetailsView({super.key, required this.flock});
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +35,15 @@ class FlockDetailsView extends StatelessWidget {
                         child: _buildSummaryCard(
                           "الربح",
                           flock.income - flock.expense,
+                          200, // Height of the card
                         ),
                       ),
                       Expanded(
                         child: Column(
                           children: [
-                            _buildSummaryCard("المصروفات", flock.expense),
+                            _buildSummaryCard("المصروفات", flock.expense, 100),
                             const SizedBox(width: 16),
-                            _buildSummaryCard("الإيرادات", flock.income),
+                            _buildSummaryCard("الإيرادات", flock.income, 100),
                           ],
                         ),
                       ),
@@ -82,7 +86,7 @@ class FlockDetailsView extends StatelessWidget {
                       const SizedBox(width: 16),
                       _buildDailyFeedingBtn(),
                       const SizedBox(width: 16),
-                      _buildBirdHealthBth()
+                      _buildBirdHealthBth(),
                     ],
                   ),
                   // Modifications Section
@@ -95,6 +99,25 @@ class FlockDetailsView extends StatelessWidget {
                     ...flock.modifications.map(
                       (mod) => _buildModificationCard(mod),
                     ),
+                  if (flock.feedingRecords.isNotEmpty) ...[
+                    _buildSectionHeader('سجل التغذية اليومية'),
+                    ...flock.feedingRecords.map(
+                      (record) => _buildDetailCard([
+                        _buildDetailRow(
+                          'التاريخ',
+                          _formatDateTime(record.date),
+                        ),
+                        _buildDetailRow(
+                          'الكمية',
+                          '${record.quantity} كجم ${record.feedType.arabicName}',
+                        ),
+                        _buildDetailRow(
+                          'سعر الكيلو',
+                          '${record.costPerKg} جنيه',
+                        ),
+                      ]),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -126,12 +149,14 @@ class FlockDetailsView extends StatelessWidget {
 
   Widget _buildDailyFeedingBtn() {
     return ElevatedButton(
-      onPressed: ()  {
-         Get.to<Flock>(
-          () => DailyFeedingForm( onSave: (dailyFeeding){
-            flock.feedingRecords.add(dailyFeeding);
-            Get.back(result: flock);
-          },),
+      onPressed: () {
+        Get.to<Flock>(
+          () => DailyFeedingForm(
+            onSave: (dailyFeeding) {
+              flock.feedingRecords= [...flock.feedingRecords, dailyFeeding];
+              controller.saveAndNavigateToFlockDetails(flock);
+            },
+          ),
         );
       },
       style: ElevatedButton.styleFrom(
@@ -174,13 +199,15 @@ class FlockDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard(String title, double value) {
+  Widget _buildSummaryCard(String title, double value, double height) {
     return SizedBox(
       width: double.infinity,
+      height: height,
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(title, style: Get.textTheme.titleSmall),
               Text(

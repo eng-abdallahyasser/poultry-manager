@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/bird_modification.dart';
@@ -320,13 +318,7 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
         modifications: [...widget.flock.modifications, modification],
       );
 
-      // Save and go back
-      log('New modification: ${modification.toMap()}');
-      log(
-        'Updated flock has ${updatedFlock.modifications.length} modifications',
-      );
-
-      controller.navigateToFlockDetails(updatedFlock);
+      controller.saveAndNavigateToFlockDetails(updatedFlock);
     }
   }
 }

@@ -40,8 +40,9 @@ class AddFeedStockController extends GetxController {
       final newStock = FeedStock(
         feedCompany: selectedCompany.value,
         feedType: selectedFeedType.value,
-        quantity: double.parse(quantityController.text),
-        measurementUnit: selectedUnit.value,
+        quantityInKg:
+            double.parse(quantityController.text) *
+            selectedUnit.value.kgEquivalent,
         totalCost: double.parse(totalCostController.text),
         purchaseDate: selectedDate.value,
         expiryDate: expiryDate.value,
@@ -50,10 +51,9 @@ class AddFeedStockController extends GetxController {
                 ? batchNumberController.text
                 : null,
       );
-Get.back();
+      Get.back();
       _stockController.addFeedStock(newStock);
 
-      
       Get.snackbar(
         'تم الحفظ',
         'تمت إضافة العلف بنجاح',

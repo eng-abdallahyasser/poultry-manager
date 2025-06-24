@@ -16,8 +16,8 @@ class Flock {
   final String paymentMethod;
   final DateTime date;
   final String notes;
-  final List<BirdModification> modifications;
-  final List<DailyFeeding> feedingRecords;
+  List<BirdModification> modifications;
+  List<DailyFeeding> feedingRecords;
 
   Flock({
     required this.id,

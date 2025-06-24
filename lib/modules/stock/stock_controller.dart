@@ -6,14 +6,13 @@ import 'package:poultry_manager/data/models/vaccine_stock.dart';
 
 class StockController extends GetxController {
   final FeedRepository feedRepo = Get.find();
-  
+
   // We'll add medicine and vaccine repositories later
   final RxList<FeedStock> feedStocks = <FeedStock>[].obs;
   final RxList<MedicineStock> medicineStocks = <MedicineStock>[].obs;
   final RxList<VaccineStock> vaccineStocks = <VaccineStock>[].obs;
 
-  StockController(
-  );
+  StockController();
 
   @override
   void onInit() {
@@ -29,7 +28,7 @@ class StockController extends GetxController {
   }
 
   double getTotalFeedStock() {
-    return feedStocks.fold(0, (sum, stock) => sum + stock.quantity);
+    return feedStocks.fold(0, (sum, stock) => sum + stock.quantityInKg);
   }
 
   void addFeedStock(FeedStock newStock) {

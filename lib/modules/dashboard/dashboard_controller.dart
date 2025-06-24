@@ -56,7 +56,7 @@ class DashboardController extends GetxController {
     }
   }
 
-  void navigateToFlockDetails(Flock updatedFlock) async {
+  void saveAndNavigateToFlockDetails(Flock updatedFlock) async {
     final index = flocks.indexWhere((f) => f.id == updatedFlock.id);
     if (index != -1) {
       flocks[index] = updatedFlock;
@@ -79,6 +79,6 @@ class DashboardController extends GetxController {
     Get.back();
     update();
   }
+
   
-  void updateFlock(Flock updatedFlock) {}
 }

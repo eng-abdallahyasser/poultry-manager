@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:get/get.dart';
@@ -11,13 +10,11 @@ class FeedRepository extends GetxService {
   List<FeedStock> _feedStocks = [];
   late final SharedPreferences _prefs;
 
-
-
   List<FeedType> get availableFeedTypes =>
       _feedStocks.map((stock) => stock.feedType).toSet().toList();
 
   Iterable<FeedStock> get feedStocks =>
-      _feedStocks.where((stock) => stock.quantity > 0);
+      _feedStocks.where((stock) => stock.quantityInKg > 0);
 
   Future<FeedRepository> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -43,21 +40,21 @@ class FeedRepository extends GetxService {
   void addFeedStock(FeedStock stock) {
     _feedStocks.add(stock);
     try {
-    _saveToStorage();
-    log('Saved data: ${_prefs.getString('feed_stocks')}');
+      _saveToStorage();
+      log('Saved data: ${_prefs.getString('feed_stocks')}');
       Get.snackbar('Success', 'Flocks saved successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to save flocks: $e');
     }
-    
   }
 
   void consumeFeed(FeedType type, double quantity) {
     // Implement stock consumption logic
     for (var stock in _feedStocks) {
-      if (stock.feedType == type && stock.quantity >= quantity) {
-        stock.quantity -= quantity;
-        if (stock.quantity < 0) stock.quantity = 0; // Prevent negative quantity
+      if (stock.feedType == type && stock.quantityInKg >= quantity) {
+        stock.quantityInKg -= quantity;
+        if (stock.quantityInKg < 0)
+          stock.quantityInKg = 0; // Prevent negative quantity
         _saveToStorage();
         return;
       }
@@ -77,6 +74,12 @@ class FeedRepository extends GetxService {
   getStockQuantity(FeedType type) {
     return _feedStocks
         .where((stock) => stock.feedType == type)
-        .fold(0.0, (sum, stock) => sum + stock.quantity);
+        .fold(0.0, (sum, stock) => sum + stock.quantityInKg);
+  }
+
+  getCostPerKg(FeedType feedType) {
+    final stock = _feedStocks.firstWhere((s) => s.feedType == feedType);
+    log('Cost per kg for $feedType: ${stock.costPerKg}');
+    return stock.costPerKg;
   }
 }

@@ -52,12 +52,12 @@ class DashboardView extends GetView<DashboardController> {
   Widget _buildSummaryCards() {
     return Row(
       children: [
-        Expanded(child: _buildSummaryCard('Profit', controller.profit.value)),
+        Expanded(child: _buildSummaryCard('Profit', controller.profit.value, 200)),
         Expanded(
           child: Column(
             children: [
-              _buildSummaryCard('Expense', controller.expense.value),
-              _buildSummaryCard('Income', controller.income.value),
+              _buildSummaryCard('Expense', controller.expense.value, 100),
+              _buildSummaryCard('Income', controller.income.value, 100),
             ],
           ),
         ),
@@ -65,13 +65,15 @@ class DashboardView extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildSummaryCard(String title, double value) {
+  Widget _buildSummaryCard(String title, double value,double height) {
     return SizedBox(
       width: double.infinity,
+      height: height,
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(title, style: Get.textTheme.titleSmall),
               Text(

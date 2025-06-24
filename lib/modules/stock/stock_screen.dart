@@ -167,7 +167,7 @@ class StockScreen extends StatelessWidget {
           final stock = controller.feedStocks[index];
           return _buildStockItem(
             stock.feedType.arabicName,
-            '${stock.quantity} كجم',
+            '${stock.quantityInKg} كجم',
             '${stock.feedCompany} - ${stock.costPerKg} ج/كجم',
             Colors.blue,
           );
