@@ -79,26 +79,6 @@ class DashboardController extends GetxController {
     Get.back();
     update();
   }
-
-  void navigateTo(int index) {
-    switch (index) {
-      case 0:
-        // Already on dashboard
-        break;
-      case 1:
-        Get.toNamed('/reports');
-        break;
-      case 2:
-        Get.toNamed('/stock');
-        break;
-      case 3:
-        Get.toNamed('/settings');
-        break;
-      case 4:
-        Get.toNamed('/pharmacy');
-        break;
-    }
-  }
-
+  
   void updateFlock(Flock updatedFlock) {}
 }

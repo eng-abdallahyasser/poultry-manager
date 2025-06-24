@@ -1,4 +1,7 @@
-import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
+
+import 'dart:developer';
+
+import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/feed_stock.dart';
 import 'package:poultry_manager/data/models/feeding_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,10 +11,12 @@ class FeedRepository extends GetxService {
   List<FeedStock> _feedStocks = [];
   late final SharedPreferences _prefs;
 
-  List<FeedType> get availableFeedTypes => 
+
+
+  List<FeedType> get availableFeedTypes =>
       _feedStocks.map((stock) => stock.feedType).toSet().toList();
 
-  Iterable<FeedStock> get feedStocks => 
+  Iterable<FeedStock> get feedStocks =>
       _feedStocks.where((stock) => stock.quantity > 0);
 
   Future<FeedRepository> init() async {
@@ -29,13 +34,22 @@ class FeedRepository extends GetxService {
   }
 
   void _saveToStorage() {
-    final stocksJson = jsonEncode(_feedStocks.map((stock) => stock.toMap()).toList());
+    final stocksJson = jsonEncode(
+      _feedStocks.map((stock) => stock.toMap()).toList(),
+    );
     _prefs.setString('feed_stocks', stocksJson);
   }
 
   void addFeedStock(FeedStock stock) {
     _feedStocks.add(stock);
+    try {
     _saveToStorage();
+    log('Saved data: ${_prefs.getString('feed_stocks')}');
+      Get.snackbar('Success', 'Flocks saved successfully');
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to save flocks: $e');
+    }
+    
   }
 
   void consumeFeed(FeedType type, double quantity) {
@@ -49,7 +63,6 @@ class FeedRepository extends GetxService {
       }
     }
 
-    
     _saveToStorage();
   }
 

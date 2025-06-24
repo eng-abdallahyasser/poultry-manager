@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:poultry_manager/modules/main_scaffold.dart';
 import 'package:poultry_manager/modules/stock/stock_controller.dart';
 
 class StockScreen extends StatelessWidget {
@@ -10,11 +11,9 @@ class StockScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('إدارة المخزون'),
-        centerTitle: true,
-      ),
+    return MainScaffold(
+      title: 'إدارة المخزون',
+      currentIndex: 2,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -22,11 +21,11 @@ class StockScreen extends StatelessWidget {
             // Quick Stats Cards
             _buildStatsRow(),
             const SizedBox(height: 20),
-            
+
             // Main Action Buttons
             _buildActionButtons(),
             const SizedBox(height: 20),
-            
+
             // Stock Lists
             Expanded(
               child: DefaultTabController(
@@ -62,9 +61,21 @@ class StockScreen extends StatelessWidget {
   Widget _buildStatsRow() {
     return Row(
       children: [
-        _buildStatCard('الأعلاف', '${controller.getTotalFeedStock()} كجم', Colors.blue),
-        _buildStatCard('الأدوية', '${controller.medicineStocks.length} نوع', Colors.green),
-        _buildStatCard('اللقاحات', '${controller.vaccineStocks.length} نوع', Colors.orange),
+        _buildStatCard(
+          'الأعلاف',
+          '${controller.getTotalFeedStock()} كجم',
+          Colors.blue,
+        ),
+        _buildStatCard(
+          'الأدوية',
+          '${controller.medicineStocks.length} نوع',
+          Colors.green,
+        ),
+        _buildStatCard(
+          'اللقاحات',
+          '${controller.vaccineStocks.length} نوع',
+          Colors.orange,
+        ),
       ],
     );
   }
@@ -78,11 +89,14 @@ class StockScreen extends StatelessWidget {
           child: Column(
             children: [
               Text(title, style: TextStyle(color: color)),
-              Text(value, style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.bold,
-                fontSize: 16
-              )),
+              Text(
+                value,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ],
           ),
         ),
@@ -123,7 +137,12 @@ class StockScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton(String text, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildActionButton(
+    String text,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return ElevatedButton.icon(
       onPressed: onTap,
       label: Column(
@@ -141,51 +160,62 @@ class StockScreen extends StatelessWidget {
   }
 
   Widget _buildFeedStockList() {
-    return Obx(() => ListView.builder(
-      itemCount: controller.feedStocks.length,
-      itemBuilder: (context, index) {
-        final stock = controller.feedStocks[index];
-        return _buildStockItem(
-          stock.feedType.arabicName,
-          '${stock.quantity} كجم',
-          '${stock.feedCompany} - ${stock.costPerKg} ج/كجم',
-          Colors.blue,
-        );
-      },
-    ));
+    return Obx(
+      () => ListView.builder(
+        itemCount: controller.feedStocks.length,
+        itemBuilder: (context, index) {
+          final stock = controller.feedStocks[index];
+          return _buildStockItem(
+            stock.feedType.arabicName,
+            '${stock.quantity} كجم',
+            '${stock.feedCompany} - ${stock.costPerKg} ج/كجم',
+            Colors.blue,
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildMedicineStockList() {
-    return Obx(() => ListView.builder(
-      itemCount: controller.medicineStocks.length,
-      itemBuilder: (context, index) {
-        final stock = controller.medicineStocks[index];
-        return _buildStockItem(
-          stock.name,
-          '${stock.quantity} ${stock.unit}',
-          '${stock.supplier} - ${stock.expiryDate != null ? DateFormat('yyyy/MM/dd').format(stock.expiryDate!) : "لا يوجد تاريخ صلاحية"}',
-          Colors.green,
-        );
-      },
-    ));
+    return Obx(
+      () => ListView.builder(
+        itemCount: controller.medicineStocks.length,
+        itemBuilder: (context, index) {
+          final stock = controller.medicineStocks[index];
+          return _buildStockItem(
+            stock.name,
+            '${stock.quantity} ${stock.unit}',
+            '${stock.supplier} - ${stock.expiryDate != null ? DateFormat('yyyy/MM/dd').format(stock.expiryDate!) : "لا يوجد تاريخ صلاحية"}',
+            Colors.green,
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildVaccineStockList() {
-    return Obx(() => ListView.builder(
-      itemCount: controller.vaccineStocks.length,
-      itemBuilder: (context, index) {
-        final stock = controller.vaccineStocks[index];
-        return _buildStockItem(
-          stock.name,
-          '${stock.quantity} جرعة',
-          '${stock.targetDisease} - ${stock.expiryDate != null ? DateFormat('yyyy/MM/dd').format(stock.expiryDate!) : "لا يوجد تاريخ صلاحية"}',
-          Colors.orange,
-        );
-      },
-    ));
+    return Obx(
+      () => ListView.builder(
+        itemCount: controller.vaccineStocks.length,
+        itemBuilder: (context, index) {
+          final stock = controller.vaccineStocks[index];
+          return _buildStockItem(
+            stock.name,
+            '${stock.quantity} جرعة',
+            '${stock.targetDisease} - ${stock.expiryDate != null ? DateFormat('yyyy/MM/dd').format(stock.expiryDate!) : "لا يوجد تاريخ صلاحية"}',
+            Colors.orange,
+          );
+        },
+      ),
+    );
   }
 
-  Widget _buildStockItem(String title, String quantity, String subtitle, Color color) {
+  Widget _buildStockItem(
+    String title,
+    String quantity,
+    String subtitle,
+    Color color,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -200,10 +230,10 @@ class StockScreen extends StatelessWidget {
         ),
         title: Text(title),
         subtitle: Text(subtitle),
-        trailing: Text(quantity, style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.bold,
-        )),
+        trailing: Text(
+          quantity,
+          style: TextStyle(color: color, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

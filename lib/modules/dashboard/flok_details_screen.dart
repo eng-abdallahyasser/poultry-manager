@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/bird_modification.dart';
-import 'package:poultry_manager/data/models/dialy_feeding.dart';
 import 'package:poultry_manager/data/models/flok.dart';
 import 'package:poultry_manager/modules/dashboard/daily_feeding_form.dart';
 import 'package:poultry_manager/modules/dashboard/modify_bird_screen.dart';

@@ -7,7 +7,7 @@ class StockBinding implements Bindings {
   void dependencies() {
     Get.lazyPut<FeedRepository>(() => FeedRepository());
     Get.lazyPut<StockController>(
-      () => StockController(Get.find<FeedRepository>()),
+      () => StockController(),
     );
   }
 }

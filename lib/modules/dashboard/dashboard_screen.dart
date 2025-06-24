@@ -2,29 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/modules/dashboard/flok_card.dart';
 import 'package:poultry_manager/modules/dashboard/flok_details_screen.dart';
+import 'package:poultry_manager/modules/main_scaffold.dart';
 import 'dashboard_controller.dart';
 
 class DashboardView extends GetView<DashboardController> {
   const DashboardView({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Dashboard'), centerTitle: true),
+    return MainScaffold(
+      currentIndex: 0,
+      title: 'Dashboard',
       body: Obx(
         () => Column(
           children: [
             // Add your dashboard widgets here
             _buildSummaryCards(),
+            _buildAddFlockBtn(),
             _buildFlockList(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: controller.navigateToAddFlock,
-        child: Icon(Icons.add),
+    );
+  }
+
+  Widget _buildAddFlockBtn() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: controller.navigateToAddFlock,
+        child: Card(
+          color: Colors.blueAccent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Add New Flock',
+              style: Get.textTheme.titleMedium?.copyWith(color: Colors.white),
+            ),
+          ),
+        ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
@@ -82,28 +103,6 @@ class DashboardView extends GetView<DashboardController> {
           },
         ),
       ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      selectedItemColor: Colors.blueAccent,
-      unselectedItemColor: Colors.grey,
-      currentIndex: 0,
-      onTap: (index) => controller.navigateTo(index),
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard),
-          label: 'Dashboard',
-        ),
-        BottomNavigationBarItem(icon: Icon(Icons.analytics), label: 'Reports'),
-        BottomNavigationBarItem(icon: Icon(Icons.inventory), label: 'Stock'),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.medical_services),
-          label: 'Pharmacy',
-        ),
-      ],
     );
   }
 }

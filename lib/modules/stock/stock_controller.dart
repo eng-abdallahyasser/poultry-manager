@@ -12,12 +12,15 @@ class StockController extends GetxController {
   final RxList<MedicineStock> medicineStocks = <MedicineStock>[].obs;
   final RxList<VaccineStock> vaccineStocks = <VaccineStock>[].obs;
 
-  StockController(FeedRepository find);
+  StockController(
+  );
 
   @override
   void onInit() {
     super.onInit();
-    loadStocks();
+    feedRepo.init().then((_) {
+      loadStocks();
+    });
   }
 
   void loadStocks() {
@@ -27,6 +30,12 @@ class StockController extends GetxController {
 
   double getTotalFeedStock() {
     return feedStocks.fold(0, (sum, stock) => sum + stock.quantity);
+  }
+
+  void addFeedStock(FeedStock newStock) {
+    feedStocks.add(newStock);
+    feedRepo.addFeedStock(newStock);
+    update();
   }
 
   // Similar methods for medicines and vaccines
