@@ -32,6 +32,7 @@ class MainScaffold extends StatelessWidget {
       ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         currentIndex: currentIndex,

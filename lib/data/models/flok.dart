@@ -75,6 +75,25 @@ class Flock {
     return feedingRecords.fold(0, (sum, record) => sum + record.totalCost);
   }
 
+  double get totalIncome {
+    return income - totalFeedCost - expense;
+  }
+
+  double get totalExpense {
+    double modificationsExpense = expense;
+    for (var mod in modifications) {
+      if (mod is BirdReduction) {
+        if (mod.reason == ReductionReason.sold) {
+          modificationsExpense += mod.cost;
+        }
+      } else
+      if (mod is BirdAddition) {
+        modificationsExpense -= mod.cost;
+      }
+    }
+    return modificationsExpense + totalFeedCost;
+  }
+
   factory Flock.fromMap(Map<String, dynamic> map) {
     return Flock(
       id: map['id'],

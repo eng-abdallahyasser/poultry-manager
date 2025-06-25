@@ -59,6 +59,8 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
               _buildTextFormField(
                 label: "التكلفة (اختياري)",
                 keyboardType: TextInputType.number,
+                validator: (value) =>
+                value!.isEmpty ? 'الرجاء إدخال التكلفة' : null,
                 onSaved: (newValue) => cost = double.tryParse(newValue ?? ''),
               ),
               Padding(
@@ -271,6 +273,8 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
   void _submitModification() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
+
 
       BirdModification modification;
       if (modificationType == 'add') {

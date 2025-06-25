@@ -11,7 +11,6 @@ class FlockDetailsView extends StatelessWidget {
   final Flock flock;
   final DashboardController controller = Get.find<DashboardController>();
 
-
   FlockDetailsView({super.key, required this.flock});
 
   @override
@@ -32,18 +31,34 @@ class FlockDetailsView extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
+                        flex: 3,
                         child: _buildSummaryCard(
                           "الربح",
                           flock.income - flock.expense,
-                          200, // Height of the card
+                          300, // Height of the card
                         ),
                       ),
                       Expanded(
+                        flex: 2,
                         child: Column(
                           children: [
-                            _buildSummaryCard("المصروفات", flock.expense, 100),
+                            _buildSummaryCard(
+                              "المصروفات",
+                              flock.totalExpense,
+                              100,
+                            ),
                             const SizedBox(width: 16),
-                            _buildSummaryCard("الإيرادات", flock.income, 100),
+                            _buildSummaryCard(
+                              "الإيرادات",
+                              flock.totalIncome,
+                              100,
+                            ),
+                            const SizedBox(width: 16),
+                            _buildSummaryCard(
+                              "تكلفة التغذية",
+                              flock.totalFeedCost,
+                              100,
+                            ),
                           ],
                         ),
                       ),
@@ -153,7 +168,7 @@ class FlockDetailsView extends StatelessWidget {
         Get.to<Flock>(
           () => DailyFeedingForm(
             onSave: (dailyFeeding) {
-              flock.feedingRecords= [...flock.feedingRecords, dailyFeeding];
+              flock.feedingRecords = [...flock.feedingRecords, dailyFeeding];
               controller.saveAndNavigateToFlockDetails(flock);
             },
           ),
@@ -211,7 +226,7 @@ class FlockDetailsView extends StatelessWidget {
             children: [
               Text(title, style: Get.textTheme.titleSmall),
               Text(
-                '\$${value.toStringAsFixed(2)}',
+                value.toStringAsFixed(1),
                 style: Get.textTheme.headlineSmall,
               ),
             ],
