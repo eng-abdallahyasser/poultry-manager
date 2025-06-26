@@ -76,11 +76,17 @@ class Flock {
   }
 
   double get totalIncome {
-    return income - totalFeedCost - expense;
+    return income + modifications.fold(0, (sum, mod) {
+      if (mod is BirdReduction && mod.reason == ReductionReason.sold) {
+        return sum + mod.cost;
+      }
+      return sum;
+    });
+    
   }
 
   double get totalExpense {
-    double modificationsExpense = expense;
+    double modificationsExpense = 0;
     for (var mod in modifications) {
       if (mod is BirdReduction) {
         if (mod.reason == ReductionReason.sold) {

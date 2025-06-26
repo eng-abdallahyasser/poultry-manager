@@ -320,6 +320,7 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
         date: widget.flock.date,
         notes: widget.flock.notes,
         modifications: [...widget.flock.modifications, modification],
+        feedingRecords: widget.flock.feedingRecords,
       );
 
       controller.saveAndNavigateToFlockDetails(updatedFlock);

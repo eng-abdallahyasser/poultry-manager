@@ -34,7 +34,7 @@ class FlockDetailsView extends StatelessWidget {
                         flex: 3,
                         child: _buildSummaryCard(
                           "الربح",
-                          flock.income - flock.expense,
+                          flock.totalIncome - flock.totalExpense,
                           300, // Height of the card
                         ),
                       ),
@@ -124,11 +124,11 @@ class FlockDetailsView extends StatelessWidget {
                         ),
                         _buildDetailRow(
                           'الكمية',
-                          '${record.quantity} كجم ${record.feedType.arabicName}',
+                          '${record.quantity} كجم ${record.quantity*record.costPerKg} جنيه',
                         ),
                         _buildDetailRow(
                           'سعر الكيلو',
-                          '${record.costPerKg} جنيه',
+                          '${record.costPerKg} جنيه لكل كجم (${record.feedType.arabicName})',
                         ),
                       ]),
                     ),
@@ -321,12 +321,13 @@ class FlockDetailsView extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '${mod.count} طائر',
+                  '${mod.count} طائر ${'- ${mod.cost} جنيه' }',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isAddition ? Colors.green : Colors.red,
                   ),
                 ),
+                
               ],
             ),
             const SizedBox(height: 8),
