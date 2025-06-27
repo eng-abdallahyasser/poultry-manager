@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/bird_modification.dart';
 import 'package:poultry_manager/data/models/flok.dart';
 import 'package:poultry_manager/modules/dashboard/dashboard_controller.dart';
+import 'package:poultry_manager/modules/global_widgets/custom_btn.dart';
 
 class ModifyBirdsView extends StatefulWidget {
   final Flock flock;
@@ -55,45 +56,49 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
                     (value) => value!.isEmpty ? 'الرجاء إدخال العدد' : null,
                 onSaved: (value) => count = value!,
               ),
+              Row(
+                children: [],
+              ),
 
               _buildTextFormField(
                 label: "التكلفة (اختياري)",
                 keyboardType: TextInputType.number,
-                validator: (value) =>
-                value!.isEmpty ? 'الرجاء إدخال التكلفة' : null,
-                onSaved: (newValue) => cost = double.tryParse(newValue ?? ''),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: "نوع التكلفة",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                validator:
+                    (value) =>
+                        value!.isEmpty ? 'الرجاء إدخال التكلفة' : null,
+                onSaved:
+                    (newValue) => cost = double.tryParse(newValue ?? ''),
+              )
+              ,Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: "نوع التكلفة",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: "لكل طائر",
+                          child: Text("تكلفة كل طائر"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "التكلفة الكلية",
+                          child: Text("التكلفة الكلية"),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          if (value == "لكل طائر") {
+                            isCostPerBird = true;
+                          } else {
+                            isCostPerBird = false;
+                          }
+                        });
+                      },
                     ),
                   ),
-                  items: [
-                    DropdownMenuItem<String>(
-                      value: "لكل طائر",
-                      child: Text("تكلفة كل طائر"),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: "التكلفة الكلية",
-                      child: Text("التكلفة الكلية"),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == "لكل طائر") {
-                        isCostPerBird = true;
-                      } else {
-                        isCostPerBird = false;
-                      }
-                    });
-                  },
-                ),
-              ),
-
               // For reductions only
               if (modificationType == 'reduce') ...[
                 _buildDropdownFormField(
@@ -140,14 +145,7 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
               ),
 
               // Submit Button
-              ElevatedButton(
-                onPressed: _submitModification,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  minimumSize: const Size(double.infinity, 50),
-                ),
-                child: const Text('حفظ التعديل'),
-              ),
+              CustomBtn(title: 'حفظ التعديل', onTap: _submitModification)
             ],
           ),
         ),
@@ -273,8 +271,6 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
   void _submitModification() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-
 
       BirdModification modification;
       if (modificationType == 'add') {

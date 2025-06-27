@@ -74,10 +74,6 @@ class AddFeedStockScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Batch Number
-              _buildBatchNumberField(controller),
-              const SizedBox(height: 16),
-
               // Notes
               _buildNotesField(controller),
               const SizedBox(height: 24),

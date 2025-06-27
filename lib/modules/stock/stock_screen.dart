@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:poultry_manager/modules/main_scaffold.dart';
+import 'package:poultry_manager/modules/global_widgets/main_scaffold.dart';
 import 'package:poultry_manager/modules/stock/stock_controller.dart';
 
 class StockScreen extends StatelessWidget {

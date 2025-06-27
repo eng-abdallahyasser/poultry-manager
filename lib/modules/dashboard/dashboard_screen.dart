@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/modules/dashboard/flok_card.dart';
 import 'package:poultry_manager/modules/dashboard/flok_details_screen.dart';
-import 'package:poultry_manager/modules/main_scaffold.dart';
+import 'package:poultry_manager/modules/global_widgets/custom_btn.dart';
+import 'package:poultry_manager/modules/global_widgets/main_scaffold.dart';
 import 'dashboard_controller.dart';
 
 class DashboardView extends GetView<DashboardController> {
@@ -18,32 +19,9 @@ class DashboardView extends GetView<DashboardController> {
           children: [
             // Add your dashboard widgets here
             _buildSummaryCards(),
-            _buildAddFlockBtn(),
+            CustomBtn(title: 'اضافة قطيع', onTap: controller.navigateToAddFlock),
             _buildFlockList(),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAddFlockBtn() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: controller.navigateToAddFlock,
-        child: Card(
-          color: Colors.blueAccent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Add New Flock',
-              style: Get.textTheme.titleMedium?.copyWith(color: Colors.white),
-            ),
-          ),
         ),
       ),
     );

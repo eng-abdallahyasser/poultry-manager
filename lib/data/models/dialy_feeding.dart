@@ -8,6 +8,7 @@ class DailyFeeding {
   final FeedType feedType;
   final String? notes;
   final double costPerKg;
+  final int countOfBirdsThen;
 
   DailyFeeding({
     required this.date,
@@ -16,6 +17,7 @@ class DailyFeeding {
     required this.feedType,
     this.notes,
     required this.costPerKg,
+    required this.countOfBirdsThen,
   }) : id = DateTime.now().millisecondsSinceEpoch.toString();
 
   double get totalCost => quantity * costPerKg;
@@ -30,6 +32,7 @@ class DailyFeeding {
       'feedType': feedType.name, // Store enum name
       'notes': notes,
       'costPerKg': costPerKg,
+      'countOfBirdsThen': countOfBirdsThen,
     };
   }
 
@@ -44,6 +47,7 @@ class DailyFeeding {
       ),
       notes: map['notes'],
       costPerKg: map['costPerKg'],
+      countOfBirdsThen: map['countOfBirdsThen'],
     );
   }
 }

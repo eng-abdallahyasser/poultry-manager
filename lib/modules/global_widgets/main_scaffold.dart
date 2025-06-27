@@ -37,6 +37,7 @@ class MainScaffold extends StatelessWidget {
         unselectedItemColor: Colors.grey,
         currentIndex: currentIndex,
         onTap: (index) {
+          if (index == currentIndex) return; // Prevent re-navigation to the same page
           if (index == 0) Get.offAllNamed(Routes.DASHBOARD);
           if (index == 1) Get.offAllNamed(Routes.REPORTS);
           if (index == 2) Get.offAllNamed(Routes.STOCK);
@@ -46,20 +47,20 @@ class MainScaffold extends StatelessWidget {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            label: 'الرئيسة',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.analytics),
-            label: 'Reports',
+            label: 'التقارير',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: 'Stock'),
+          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: 'المخزون'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(Icons.agriculture_rounded),
+            label: 'الاعلاف',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.medical_services),
-            label: 'Pharmacy',
+            label: 'الأدوية',
           ),
         ],
       ),

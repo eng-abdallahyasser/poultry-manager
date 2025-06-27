@@ -88,16 +88,17 @@ class Flock {
   double get totalExpense {
     double modificationsExpense = 0;
     for (var mod in modifications) {
-      if (mod is BirdReduction) {
-        if (mod.reason == ReductionReason.sold) {
-          modificationsExpense += mod.cost;
-        }
-      } else
       if (mod is BirdAddition) {
-        modificationsExpense -= mod.cost;
+        modificationsExpense += mod.cost;
       }
     }
-    return modificationsExpense + totalFeedCost;
+    return expense + modificationsExpense + totalFeedCost;
+  }
+
+  double get feedingConsumptionAverage {
+    if (feedingRecords.isEmpty) return 0;
+    double feedingConsumptionAverage = feedingRecords.fold(0, (sum, record) => sum + (record.quantity/ record.countOfBirdsThen));
+    return feedingConsumptionAverage;
   }
 
   factory Flock.fromMap(Map<String, dynamic> map) {

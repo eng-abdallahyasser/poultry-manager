@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:poultry_manager/data/local/flock_repo.dart';
 import 'package:poultry_manager/data/models/flok.dart';
 import 'package:poultry_manager/modules/dashboard/adding_flok_screen.dart';
+import 'package:poultry_manager/modules/dashboard/flok_details_screen.dart';
 
 class DashboardController extends GetxController {
   final LocalStorage localStorage = Get.find();
@@ -11,6 +12,7 @@ class DashboardController extends GetxController {
   var expense = 0.0.obs;
   var profit = 0.0.obs;
   var flocks = <Flock>[].obs;
+
 
   @override
   void onInit() {
@@ -76,7 +78,15 @@ class DashboardController extends GetxController {
         colorText: Colors.white,
       );
     }
-    Get.back();
+    Get.offUntil(
+      GetPageRoute(
+        page: () => FlockDetailsView(
+          flock: updatedFlock,
+        ),
+        transition: Transition.fadeIn,
+      ),
+      (route) => false,
+    );
     update();
   }
 

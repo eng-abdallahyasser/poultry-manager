@@ -4,19 +4,23 @@ import 'package:intl/intl.dart';
 import 'package:poultry_manager/data/local/feed_repo.dart';
 import 'package:poultry_manager/data/models/dialy_feeding.dart';
 import 'package:poultry_manager/data/models/feeding_type.dart';
+import 'package:poultry_manager/data/models/flok.dart';
+import 'package:poultry_manager/modules/dashboard/dashboard_controller.dart';
 import 'package:poultry_manager/modules/dashboard/feed_type_chip.dart';
+import 'package:poultry_manager/modules/global_widgets/custom_btn.dart';
 
 class DailyFeedingForm extends StatefulWidget {
-  final Function(DailyFeeding) onSave;
+  final Flock flock;
   final FeedRepository feedRepo = Get.find();
 
-  DailyFeedingForm({super.key, required this.onSave});
+  DailyFeedingForm({super.key, required this.flock});
 
   @override
   State<DailyFeedingForm> createState() => _DailyFeedingFormState();
 }
 
 class _DailyFeedingFormState extends State<DailyFeedingForm> {
+  DashboardController controller = Get.find<DashboardController>();
   FeedType? _selectedFeedType;
   String? _selectedCompany;
   DateTime? _selectedDate = DateTime.now();
@@ -31,7 +35,6 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
   }
 
   void _loadAvailableFeeds() {
-    
     setState(() {
       widget.feedRepo.init();
       _availableFeedTypes = widget.feedRepo.availableFeedTypes;
@@ -60,18 +63,13 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
     if (_availableFeedTypes.isEmpty) {
       return Scaffold(
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('لا يوجد علف متاح في المخزن'),
             const SizedBox(height: 16),
             const Text('الرجاء إضافة علف جديد قبل تسجيل التغذية اليومية.'),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Get.toNamed('/add-feed');
-              },
-              child: const Text('إضافة علف جديد'),
-            ),
           ],
         ),
       );
@@ -120,7 +118,7 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
                   const SizedBox(height: 16),
                   _buildDatePicker(),
                   const SizedBox(height: 16),
-                  _buildSaveBtn(),
+                  CustomBtn(title: 'حفظ', onTap: _onSave),
                 ],
               ),
             ),
@@ -159,50 +157,64 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
     );
   }
 
-  Widget _buildSaveBtn() {
-    return ElevatedButton(
-      onPressed: () {
-        if (_selectedFeedType == null || _selectedCompany == null) {
-          Get.snackbar(
-            'خطأ',
-            'الرجاء اختيار نوع العلف والشركة',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-          return;
-        }
+  void _onSave() {
+    if (_selectedFeedType == null || _selectedCompany == null) {
+      Get.snackbar(
+        'خطأ',
+        'الرجاء اختيار نوع العلف والشركة',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
 
-        final quantity = double.tryParse(_quantityController.text);
-        if (quantity == null || quantity <= 0) {
-          Get.snackbar(
-            'خطأ',
-            'الرجاء إدخال كمية صحيحة',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-          return;
-        }
+    final quantity = double.tryParse(_quantityController.text);
+    if (quantity == null || quantity <= 0) {
+      Get.snackbar(
+        'خطأ',
+        'الرجاء إدخال كمية صحيحة',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
 
-        final feeding = DailyFeeding(
-          feedType: _selectedFeedType!,
-          quantity: quantity,
-          date: _selectedDate ?? DateTime.now(),
-          costPerKg: widget.feedRepo.getCostPerKg(_selectedFeedType!),
-          feedCompany: '',
-        );
-
-        widget.onSave(feeding);
-        Get.back();
-      },
-      child: const Text('حفظ'),
+    final feeding = DailyFeeding(
+      feedType: _selectedFeedType!,
+      quantity: quantity,
+      date: _selectedDate ?? DateTime.now(),
+      costPerKg: widget.feedRepo.getCostPerKg(_selectedFeedType!),
+      feedCompany: '',
+      countOfBirdsThen: widget.flock.count,
     );
+
+    final updatedFlock = Flock(
+      id: widget.flock.id,
+      birdType: widget.flock.birdType,
+      name: widget.flock.name,
+      count: widget.flock.count,
+      flockType: widget.flock.flockType,
+      supplier: widget.flock.supplier,
+      fortifications: widget.flock.fortifications,
+      expense: widget.flock.expense,
+      income: widget.flock.income,
+      oneBirdCost: widget.flock.oneBirdCost,
+      paidTo: widget.flock.paidTo,
+      paymentMethod: widget.flock.paymentMethod,
+      date: widget.flock.date,
+      notes: widget.flock.notes,
+      modifications: widget.flock.modifications,
+      feedingRecords: [...widget.flock.feedingRecords, feeding],
+    );
+
+    controller.saveAndNavigateToFlockDetails(updatedFlock);
   }
 
   Widget _buildFeedTypeDropdown() {
     return DropdownButtonFormField<FeedType>(
       decoration: const InputDecoration(
         labelText: 'نوع العلف',
-        border: OutlineInputBorder(),        
+        border: OutlineInputBorder(),
       ),
       value: _selectedFeedType,
       items:

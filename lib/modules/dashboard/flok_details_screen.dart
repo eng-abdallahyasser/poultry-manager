@@ -79,6 +79,11 @@ class FlockDetailsView extends StatelessWidget {
                   _buildSectionHeader('المعلومات المالية'),
                   _buildDetailCard([
                     _buildDetailRow('سعر الكتكوت', '${flock.oneBirdCost} جنيه'),
+                    _buildDetailRow(
+                      'بتكلفة ابتدائية ',
+                      '${flock.expense} جنيه',
+                    ),
+
                     _buildDetailRow('دفع إلى', flock.paidTo),
                     _buildDetailRow('طريقة الدفع', flock.paymentMethod),
                   ]),
@@ -97,11 +102,18 @@ class FlockDetailsView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildModifyBirdBtn(),
+                      Expanded(child: _buildModifyBirdBtn()),
                       const SizedBox(width: 16),
-                      _buildDailyFeedingBtn(),
+                      Expanded(child: _buildDailyFeedingBtn()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(child: _buildBirdHealthBth()),
                       const SizedBox(width: 16),
-                      _buildBirdHealthBth(),
+                      Expanded(child: _buildDailyCheckBtn()),
                     ],
                   ),
                   // Modifications Section
@@ -124,7 +136,7 @@ class FlockDetailsView extends StatelessWidget {
                         ),
                         _buildDetailRow(
                           'الكمية',
-                          '${record.quantity} كجم ${record.quantity*record.costPerKg} جنيه',
+                          '${record.quantity} كجم ${record.quantity * record.costPerKg} جنيه',
                         ),
                         _buildDetailRow(
                           'سعر الكيلو',
@@ -137,6 +149,26 @@ class FlockDetailsView extends StatelessWidget {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDailyCheckBtn() {
+    return ElevatedButton(
+      onPressed: () {
+        // Navigate to daily check screen
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.purple,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.check_circle, color: Colors.white),
+          SizedBox(width: 16),
+          Text('فحص يومي', style: TextStyle(color: Colors.white)),
         ],
       ),
     );
@@ -165,14 +197,7 @@ class FlockDetailsView extends StatelessWidget {
   Widget _buildDailyFeedingBtn() {
     return ElevatedButton(
       onPressed: () {
-        Get.to<Flock>(
-          () => DailyFeedingForm(
-            onSave: (dailyFeeding) {
-              flock.feedingRecords = [...flock.feedingRecords, dailyFeeding];
-              controller.saveAndNavigateToFlockDetails(flock);
-            },
-          ),
-        );
+        Get.to<Flock>(() => DailyFeedingForm(flock: flock));
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
@@ -321,13 +346,12 @@ class FlockDetailsView extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '${mod.count} طائر ${'- ${mod.cost} جنيه' }',
+                  '${mod.count} طائر ${'- ${mod.cost} جنيه'}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isAddition ? Colors.green : Colors.red,
                   ),
                 ),
-                
               ],
             ),
             const SizedBox(height: 8),
