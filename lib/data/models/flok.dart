@@ -21,7 +21,7 @@ class Flock {
   final String notes;
   List<BirdModification> modifications;
   List<DailyFeeding> feedingRecords;
-  final List<WeightRecord> weightRecords;
+  List<WeightRecord> weightRecords;
 
   Flock({
     required this.id,

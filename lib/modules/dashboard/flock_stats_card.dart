@@ -78,14 +78,14 @@ class FlockStatsCard extends StatelessWidget {
       crossAxisSpacing: 8,
       mainAxisSpacing: 8,
       children: [
-        _buildStatItem('العمر', '${flock.ageInDays} يوم', Icons.calendar_today),
+        _buildStatItem('العمر', 'يوم \u200e${flock.ageInDays} ', Icons.calendar_today),
         _buildStatItem('تاريخ البدء', dateFormat.format(flock.date), Icons.date_range),
-        _buildStatItem('متوسط الوزن', '${(flock.averageWeight/1000).toStringAsFixed(2)} كجم', Icons.monitor_weight),
+        _buildStatItem('متوسط الوزن', 'كجم \u200e${(flock.averageWeight/1000).toStringAsFixed(3)} ', Icons.monitor_weight),
         _buildStatItem('معدل التحويل', '${flock.conversionRatePercent.toStringAsFixed(2)} %', Icons.trending_up),
-        _buildStatItem('العدد الكلي', '${flock.count} طائر', Icons.format_list_numbered),
-        _buildStatItem('العدد الحالي', '${flock.currentCount} طائر', Icons.egg),
-        _buildStatItem('عدد البيع', '${flock.soldCount} طائر', Icons.sell),
-        _buildStatItem('عدد النافق', '${flock.deadCount} طائر', Icons.heart_broken),
+        _buildStatItem('العدد الكلي', 'طائر \u200e${flock.count} ', Icons.format_list_numbered),
+        _buildStatItem('العدد الحالي', 'طائر \u200e${flock.currentCount} ', Icons.egg),
+        _buildStatItem('عدد البيع', 'طائر \u200e${flock.soldCount} ', Icons.sell),
+        _buildStatItem('عدد النافق', 'طائر \u200e${flock.deadCount} ', Icons.heart_broken),
       ],
     );
   }

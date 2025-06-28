@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/data/models/flok.dart';
+import 'package:poultry_manager/modules/dashboard/daily_check_screen.dart';
 import 'package:poultry_manager/modules/dashboard/daily_feeding_form.dart';
 import 'package:poultry_manager/modules/dashboard/dashboard_controller.dart';
 import 'package:poultry_manager/modules/dashboard/flock_stats_card.dart';
-import 'package:poultry_manager/modules/dashboard/health_check_screen.dart';
 import 'package:poultry_manager/modules/dashboard/modify_bird_screen.dart';
-import 'package:intl/intl.dart'; // Add this import for date formatting
 
 class FlockDetailsView extends StatelessWidget {
   final Flock flock;
@@ -68,41 +67,8 @@ class FlockDetailsView extends StatelessWidget {
                   const SizedBox(height: 16),
                   FlockStatsCard(flock: flock),
                   SizedBox(height: 16),
-                  // // Flock Basic Information Section
-                  // _buildSectionHeader('المعلومات الأساسية'),
-                  // _buildDetailCard([
-                  //   _buildDetailRow('نوع الطيور', flock.birdType),
-                  //   _buildDetailRow('اسم القطيع', flock.name),
-                  //   _buildDetailRow('العدد الأصلي', '${flock.count}'),
-                  //   _buildDetailRow('العدد الحالي', '${flock.currentCount}'),
-                  //   _buildDetailRow('السلالة', flock.flockType),
-                  //   _buildDetailRow('شركة المورد', flock.supplier),
-                  // ]),
 
-                  // // Financial Information Section
-                  // _buildSectionHeader('المعلومات المالية'),
-                  // _buildDetailCard([
-                  //   _buildDetailRow('سعر الكتكوت', '${flock.oneBirdCost} جنيه'),
-                  //   _buildDetailRow(
-                  //     'بتكلفة ابتدائية ',
-                  //     '${flock.expense} جنيه',
-                  //   ),
 
-                  //   _buildDetailRow('دفع إلى', flock.paidTo),
-                  //   _buildDetailRow('طريقة الدفع', flock.paymentMethod),
-                  // ]),
-
-                  // // Additional Information Section
-                  // _buildSectionHeader('معلومات إضافية'),
-                  // _buildDetailCard([
-                  //   _buildDetailRow(
-                  //     'التحصينات',
-                  //     flock.fortifications.join(', '),
-                  //   ),
-                  //   _buildDetailRow('تاريخ الإضافة', _formatDate(flock.date)),
-                  //   if (flock.notes.isNotEmpty)
-                  //     _buildDetailRow('ملاحظات', flock.notes),
-                  // ]),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -120,10 +86,6 @@ class FlockDetailsView extends StatelessWidget {
                       Expanded(child: _buildDailyCheckBtn()),
                     ],
                   ),
-                  // Modifications Section
-                  // _buildSectionHeader(
-                  //   'سجل التعديلات (${flock.modifications.length})',
-                  // ),
                 ],
               ),
             ),
@@ -136,7 +98,9 @@ class FlockDetailsView extends StatelessWidget {
   Widget _buildDailyCheckBtn() {
     return ElevatedButton(
       onPressed: () {
-        Get.to(() => HealthCheckScreen(flock: flock));
+        Get.to(() => DailyCheckScreen(onSave: (weightRecord ) { 
+          controller.addDailyCheck(flock.id, weightRecord);
+         },));
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.purple,
@@ -236,58 +200,5 @@ class FlockDetailsView extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16, bottom: 8),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.blue,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailCard(List<Widget> children) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(children: children),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
-  }
-
-  
-
-  String _formatDate(DateTime date) {
-    return DateFormat('yyyy/MM/dd').format(date);
-  }
-
-  String _formatDateTime(DateTime date) {
-    return DateFormat('yyyy/MM/dd - hh:mm a').format(date);
-  }
+ 
 }

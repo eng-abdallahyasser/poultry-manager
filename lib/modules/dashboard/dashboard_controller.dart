@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/data/local/flock_repo.dart';
 import 'package:poultry_manager/data/models/flok.dart';
+import 'package:poultry_manager/data/models/weight_record.dart';
 import 'package:poultry_manager/modules/dashboard/adding_flok_screen.dart';
-import 'package:poultry_manager/modules/dashboard/flok_details_screen.dart';
 
 class DashboardController extends GetxController {
   final LocalStorage localStorage = Get.find();
@@ -83,6 +83,35 @@ class DashboardController extends GetxController {
         closeOverlays: true,
       );
     
+  }
+
+  void addDailyCheck(String id, WeightRecord weightRecord) {
+    final index = flocks.indexWhere((f) =>
+        f.id == id);
+    if (index != -1) {
+
+      flocks[index].weightRecords.add(weightRecord);
+      localStorage.saveFlocks(flocks);
+      calculateSummary();
+      Get.snackbar(
+        'نجاح',
+        'تم إضافة الفحص اليومي بنجاح',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'خطأ',
+        'لم يتم العثور على القطيع المحدد',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+
+    Get.back(
+        closeOverlays: true,
+      );
+
   }
 
   

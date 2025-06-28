@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/core/routes/routes.dart';
 import 'package:poultry_manager/modules/dashboard/flok_card.dart';
-import 'package:poultry_manager/modules/dashboard/flok_details_screen.dart';
 import 'package:poultry_manager/modules/global_widgets/custom_btn.dart';
 import 'package:poultry_manager/modules/global_widgets/main_scaffold.dart';
 import 'dashboard_controller.dart';
