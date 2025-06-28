@@ -78,16 +78,11 @@ class DashboardController extends GetxController {
         colorText: Colors.white,
       );
     }
-    Get.offUntil(
-      GetPageRoute(
-        page: () => FlockDetailsView(
-          flock: updatedFlock,
-        ),
-        transition: Transition.fadeIn,
-      ),
-      (route) => false,
-    );
-    update();
+
+     Get.back(
+        closeOverlays: true,
+      );
+    
   }
 
   

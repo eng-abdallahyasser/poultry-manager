@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:poultry_manager/data/models/bird_modification.dart';
 import 'package:poultry_manager/data/models/flok.dart';
 import 'package:poultry_manager/modules/dashboard/dashboard_controller.dart';
@@ -145,7 +146,13 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
               ),
 
               // Submit Button
-              CustomBtn(title: 'حفظ التعديل', onTap: _submitModification)
+              CustomBtn(title: 'حفظ التعديل', onTap: _submitModification),
+              SizedBox(height: 16),
+              if (widget.flock.modifications.isEmpty) _buildEmptyModifications(),
+                  if (widget.flock.modifications.isNotEmpty)
+                    ...widget.flock.modifications.map(
+                      (mod) => _buildModificationCard(mod),
+                    ),
             ],
           ),
         ),
@@ -300,26 +307,104 @@ class _ModifyBirdsViewState extends State<ModifyBirdsView> {
       }
 
       // Update the flock with the new modification
-      final updatedFlock = Flock(
-        id: widget.flock.id,
-        birdType: widget.flock.birdType,
-        name: widget.flock.name,
-        count: widget.flock.count,
-        flockType: widget.flock.flockType,
-        supplier: widget.flock.supplier,
-        fortifications: widget.flock.fortifications,
-        expense: widget.flock.expense,
-        income: widget.flock.income,
-        oneBirdCost: widget.flock.oneBirdCost,
-        paidTo: widget.flock.paidTo,
-        paymentMethod: widget.flock.paymentMethod,
-        date: widget.flock.date,
-        notes: widget.flock.notes,
-        modifications: [...widget.flock.modifications, modification],
-        feedingRecords: widget.flock.feedingRecords,
+      final updatedFlock = widget.flock.copyWith(
+        modifications: [...widget.flock.modifications,modification]
       );
 
       controller.saveAndNavigateToFlockDetails(updatedFlock);
+     
     }
+  }
+  Widget _buildEmptyModifications() {
+    return const Card(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Center(
+          child: Text(
+            'لا توجد تعديلات مسجلة',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModificationCard(BirdModification mod) {
+    final isAddition = mod is BirdAddition;
+    final icon =
+        isAddition
+            ? const Icon(Icons.add_circle, color: Colors.green)
+            : const Icon(Icons.remove_circle, color: Colors.red);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                icon,
+                const SizedBox(width: 8),
+                Text(
+                  isAddition ? 'إضافة طيور' : 'تخفيض الطيور',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${mod.count} طائر ${'- ${mod.cost} جنيه'}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isAddition ? Colors.green : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            _buildModificationDetailRow('التاريخ', _formatDateTime(mod.date)),
+            if (mod is BirdReduction) ...[
+              _buildModificationDetailRow('السبب', mod.reason.arabicName),
+              if (mod.reason == ReductionReason.dead) ...[
+                if (mod.color != null)
+                  _buildModificationDetailRow('اللون', mod.color!),
+                if (mod.weight != null)
+                  _buildModificationDetailRow('الوزن', '${mod.weight} كجم'),
+                if (mod.secretions != null)
+                  _buildModificationDetailRow('الإفرازات', mod.secretions!),
+              ],
+            ],
+            if (mod.notes.isNotEmpty)
+              _buildModificationDetailRow('ملاحظات', mod.notes),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModificationDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 14))),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateTime(DateTime date) {
+    return DateFormat('yyyy/MM/dd - hh:mm a').format(date);
   }
 }

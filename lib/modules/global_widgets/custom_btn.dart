@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 
 class CustomBtn extends StatelessWidget {
-   String title;
-  void Function() onTap; 
+  final String title;
+  final void Function() onTap; 
 
-   CustomBtn({
+   const CustomBtn({
     super.key,
     required this.title,
     required this.onTap,

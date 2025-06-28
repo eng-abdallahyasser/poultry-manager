@@ -119,10 +119,76 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
                   _buildDatePicker(),
                   const SizedBox(height: 16),
                   CustomBtn(title: 'حفظ', onTap: _onSave),
+                  const SizedBox(height: 16),
+                  if (widget.flock.feedingRecords.isNotEmpty) ...[
+                    _buildSectionHeader('سجل التغذية اليومية'),
+                    ...widget.flock.feedingRecords.map(
+                      (record) => _buildDetailCard([
+                        _buildDetailRow(
+                          'التاريخ',
+                          _formatDateTime(record.date),
+                        ),
+                        _buildDetailRow(
+                          'الكمية',
+                          '${record.quantity} كجم ${record.quantity * record.costPerKg} جنيه',
+                        ),
+                        _buildDetailRow(
+                          'سعر الكيلو',
+                          '${record.costPerKg} جنيه لكل كجم (${record.feedType.arabicName})',
+                        ),
+                      ]),
+                    ),
+                  ],
+
                 ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+Widget _buildDetailCard(List<Widget> children) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(children: children),
+      ),
+    );
+  }
+
+ Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.blue,
         ),
       ),
     );
@@ -188,22 +254,7 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
       countOfBirdsThen: widget.flock.count,
     );
 
-    final updatedFlock = Flock(
-      id: widget.flock.id,
-      birdType: widget.flock.birdType,
-      name: widget.flock.name,
-      count: widget.flock.count,
-      flockType: widget.flock.flockType,
-      supplier: widget.flock.supplier,
-      fortifications: widget.flock.fortifications,
-      expense: widget.flock.expense,
-      income: widget.flock.income,
-      oneBirdCost: widget.flock.oneBirdCost,
-      paidTo: widget.flock.paidTo,
-      paymentMethod: widget.flock.paymentMethod,
-      date: widget.flock.date,
-      notes: widget.flock.notes,
-      modifications: widget.flock.modifications,
+    final updatedFlock = widget.flock.copyWith(
       feedingRecords: [...widget.flock.feedingRecords, feeding],
     );
 
@@ -261,5 +312,9 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
       },
       validator: (value) => value == null ? 'الرجاء اختيار الشركة' : null,
     );
+  }
+
+  String _formatDateTime(DateTime date) {
+    return DateFormat('yyyy/MM/dd - hh:mm a').format(date);
   }
 }

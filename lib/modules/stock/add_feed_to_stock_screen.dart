@@ -247,16 +247,6 @@ class AddFeedStockScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBatchNumberField(AddFeedStockController controller) {
-    return TextFormField(
-      controller: controller.batchNumberController,
-      decoration: const InputDecoration(
-        labelText: 'رقم الدفعة (اختياري)',
-        border: OutlineInputBorder(),
-      ),
-    );
-  }
-
   Widget _buildNotesField(AddFeedStockController controller) {
     return TextFormField(
       controller: controller.notesController,
