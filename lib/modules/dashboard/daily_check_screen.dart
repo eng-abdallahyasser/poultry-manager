@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poultry_manager/data/models/flok.dart';
 import 'package:poultry_manager/data/models/weight_record.dart';
+import 'package:poultry_manager/modules/dashboard/doctor_check_screen.dart';
 import 'package:poultry_manager/modules/global_widgets/custom_btn.dart';
 
 class DailyCheckScreen extends StatefulWidget {
+  final Flock flock;
   final Function(WeightRecord) onSave;
 
-  const DailyCheckScreen({super.key, required this.onSave});
+  const DailyCheckScreen({super.key, required this.onSave, required this.flock});
 
   @override
   State<DailyCheckScreen> createState() => _DailyCheckScreenState();
@@ -47,6 +50,8 @@ class _DailyCheckScreenState extends State<DailyCheckScreen> {
               // Notes
               _buildNotesField(),
               const SizedBox(height: 30),
+
+              _buildNavigatToDoctorCheck() ,
 
               // Action Buttons
               CustomBtn(title: ' حفظ متوسط الاوزان', onTap: _submitForm),
@@ -120,16 +125,13 @@ class _DailyCheckScreenState extends State<DailyCheckScreen> {
               },
             ),
             const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.add),
-                label: const Text('حفظ العينة'),
-                onPressed: _addSampleWeight,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                ),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.add),
+              label: const Text('حفظ العينة'),
+              onPressed: _addSampleWeight,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
             ),
           ],
@@ -175,7 +177,7 @@ class _DailyCheckScreenState extends State<DailyCheckScreen> {
                   _sampleWeights
                       .map(
                         (weight) => Chip(
-                          label: Text('${weight} جم'),
+                          label: Text('$weight جم'),
                           deleteIcon: const Icon(Icons.close, size: 18),
                           onDeleted: () => _removeSampleWeight(weight),
                         ),
@@ -243,5 +245,18 @@ class _DailyCheckScreenState extends State<DailyCheckScreen> {
     _weightController.dispose();
     _notesController.dispose();
     super.dispose();
+  }
+  
+  Widget _buildNavigatToDoctorCheck() {
+    return ElevatedButton(
+      onPressed: () {
+        Get.to(() =>DoctorCheckScreen(flockId: widget.flock.id,));
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+      ),
+      child: const Text('الانتقال إلى فحص الطبيب'),
+    );
   }
 }

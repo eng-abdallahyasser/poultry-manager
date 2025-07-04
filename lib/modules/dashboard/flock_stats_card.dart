@@ -4,7 +4,7 @@ import 'package:poultry_manager/data/models/flok.dart';
 
 class FlockStatsCard extends StatelessWidget {
   final Flock flock;
-  final DateFormat dateFormat = DateFormat('yyyy/MM/dd');
+  final DateFormat dateFormat = DateFormat('yy/MM/dd');
 
   FlockStatsCard({super.key, required this.flock});
 
@@ -74,9 +74,9 @@ class FlockStatsCard extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 3,
-      childAspectRatio: 2.5,
-      crossAxisSpacing: 8,
-      mainAxisSpacing: 8,
+      childAspectRatio: 1.5,
+      crossAxisSpacing: 6,
+      mainAxisSpacing: 6,
       children: [
         _buildStatItem('العمر', 'يوم \u200e${flock.ageInDays} ', Icons.calendar_today),
         _buildStatItem('تاريخ البدء', dateFormat.format(flock.date), Icons.date_range),

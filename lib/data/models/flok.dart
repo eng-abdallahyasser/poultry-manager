@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:poultry_manager/data/models/bird_modification.dart';
 import 'package:poultry_manager/data/models/dialy_feeding.dart';
+import 'package:poultry_manager/data/models/doctor_check.dart';
 import 'package:poultry_manager/data/models/weight_record.dart';
 
 class Flock {
@@ -22,6 +23,8 @@ class Flock {
   List<BirdModification> modifications;
   List<DailyFeeding> feedingRecords;
   List<WeightRecord> weightRecords;
+  List<DoctorCheck> doctorChecks;
+
 
   Flock({
     required this.id,
@@ -41,6 +44,7 @@ class Flock {
     this.modifications = const [],
     this.feedingRecords = const [],
     this.weightRecords = const [],
+    this.doctorChecks = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -62,6 +66,8 @@ class Flock {
       'modifications': modifications.map((mod) => mod.toMap()).toList(),
       'feedingRecords': feedingRecords.map((x) => x.toMap()).toList(),
       'weightRecords': weightRecords.map((x) => x.toMap()).toList(),
+      'doctorChecks': doctorChecks.map((x) => x.toMap()).toList(),
+
     };
   }
 
@@ -164,6 +170,9 @@ class Flock {
       weightRecords: List<WeightRecord>.from(
         map['weightRecords']?.map((x) => WeightRecord.fromMap(x)) ?? [],
       ),
+      doctorChecks: List<DoctorCheck>.from(
+        map['doctorChecks']?.map((x) => DoctorCheck.fromMap(x)) ?? [],
+      ),
     );
   }
 
@@ -185,6 +194,7 @@ class Flock {
     List<BirdModification>? modifications,
     List<DailyFeeding>? feedingRecords,
     List<WeightRecord>? weightRecords,
+    List<DoctorCheck>? doctorChecks,
   }) {
     return Flock(
       id: id ?? this.id,
@@ -204,6 +214,7 @@ class Flock {
       modifications: modifications ?? this.modifications,
       feedingRecords: feedingRecords ?? this.feedingRecords,
       weightRecords: weightRecords ?? this.weightRecords,
+      doctorChecks: doctorChecks ?? this.doctorChecks,
     );
   }
 }

@@ -86,6 +86,7 @@ class FlockDetailsView extends StatelessWidget {
                       Expanded(child: _buildDailyCheckBtn()),
                     ],
                   ),
+                  SizedBox(height: 20,)
                 ],
               ),
             ),
@@ -100,7 +101,8 @@ class FlockDetailsView extends StatelessWidget {
       onPressed: () {
         Get.to(() => DailyCheckScreen(onSave: (weightRecord ) { 
           controller.addDailyCheck(flock.id, weightRecord);
-         },));
+         },
+          flock: flock,));
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.purple,
