@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poultry_manager/data/local/flock_repo.dart';
@@ -7,7 +9,7 @@ import 'package:poultry_manager/data/models/weight_record.dart';
 import 'package:poultry_manager/modules/dashboard/adding_flok_screen.dart';
 
 class DashboardController extends GetxController {
-  final LocalStorage localStorage = Get.find();
+  final flockRepo = FlockRepository();
 
   var income = 0.0.obs;
   var expense = 0.0.obs;
@@ -20,10 +22,15 @@ class DashboardController extends GetxController {
     loadData();
   }
 
-  void loadData() {
-    // Load data from local storage
-    final storedFlocks = localStorage.getFlocks();
-    flocks.assignAll(storedFlocks);
+  void loadData() async {
+    try {
+      // Initialize the flock repository
+      await flockRepo.init();
+      final storedFlocks = flockRepo.getFlocks();
+      flocks.assignAll(storedFlocks);
+    } catch (e) {
+      log('Initialization error: $e');
+    }
 
     calculateSummary();
   }
@@ -47,7 +54,7 @@ class DashboardController extends GetxController {
     final newFlock = await Get.to<Flock>(() => AddFlockView());
     if (newFlock != null) {
       flocks.add(newFlock);
-      localStorage.saveFlocks(flocks);
+      await flockRepo.saveFlocks(flocks);
       calculateSummary();
       Get.snackbar(
         'نجاح',
@@ -62,7 +69,7 @@ class DashboardController extends GetxController {
     final index = flocks.indexWhere((f) => f.id == updatedFlock.id);
     if (index != -1) {
       flocks[index] = updatedFlock;
-      localStorage.saveFlocks(flocks);
+      await flockRepo.saveFlocks(flocks);
       calculateSummary();
       Get.snackbar(
         'نجاح',
@@ -82,11 +89,11 @@ class DashboardController extends GetxController {
     Get.back(closeOverlays: true);
   }
 
-  void addDailyCheck(String id, WeightRecord weightRecord) {
+  void addDailyCheck(String id, WeightRecord weightRecord) async {
     final index = flocks.indexWhere((f) => f.id == id);
     if (index != -1) {
       flocks[index].weightRecords.add(weightRecord);
-      localStorage.saveFlocks(flocks);
+      await flockRepo.saveFlocks(flocks);
       calculateSummary();
       Get.snackbar(
         'نجاح',
@@ -105,14 +112,15 @@ class DashboardController extends GetxController {
     Get.back(closeOverlays: true);
   }
 
-  void addDoctorCheck(String flockId, DoctorCheck check) {
+  void addDoctorCheck(String flockId, DoctorCheck check) async {
     final flockIndex = flocks.indexWhere((f) => f.id == flockId);
     if (flockIndex != -1) {
       final updatedFlock = flocks[flockIndex].copyWith(
         doctorChecks: [...flocks[flockIndex].doctorChecks, check],
       );
       flocks[flockIndex] = updatedFlock;
-      localStorage.saveFlocks(flocks);
+      await flockRepo.saveFlocks(flocks);
+
       update();
     }
     Get.back(closeOverlays: true);

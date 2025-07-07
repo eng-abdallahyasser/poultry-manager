@@ -30,8 +30,9 @@ class _DailyFeedingFormState extends State<DailyFeedingForm> {
 
   @override
   void initState() {
-    super.initState();
     _loadAvailableFeeds();
+    super.initState();
+    
   }
 
   void _loadAvailableFeeds() {

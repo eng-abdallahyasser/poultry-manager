@@ -1,3 +1,4 @@
+import 'package:hive/hive.dart';
 import 'package:poultry_manager/data/models/feeding_type.dart';
 
 enum FeedMeasurementUnit {
@@ -12,14 +13,25 @@ enum FeedMeasurementUnit {
   const FeedMeasurementUnit(this.arabicName, this.kgEquivalent);
 }
 
+
+
+@HiveType(typeId: 2)
 class FeedStock {
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final String feedCompany;
+  @HiveField(2)
   final FeedType feedType;
+  @HiveField(3)
   double quantityInKg;
+  @HiveField(4)
   final DateTime purchaseDate;
+  @HiveField(5)
   final DateTime? expiryDate;
+  @HiveField(6)
   final String? batchNumber;
+  @HiveField(7)
   final double totalCost;
 
   FeedStock({
@@ -64,5 +76,21 @@ class FeedStock {
       batchNumber: map['batchNumber'],
       totalCost: map['totalCost'],
     );
+  }
+}
+
+class FeedStockAdapter extends TypeAdapter<FeedStock> {
+  @override
+  final int typeId = 2;
+
+  @override
+  FeedStock read(BinaryReader reader) {
+    final map = reader.readMap();
+    return FeedStock.fromMap(map.cast<String, dynamic>());
+  }
+
+  @override
+  void write(BinaryWriter writer, FeedStock obj) {
+    writer.writeMap(obj.toMap());
   }
 }

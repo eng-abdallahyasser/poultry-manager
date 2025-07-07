@@ -1,28 +1,50 @@
+
 import 'dart:developer';
 
+import 'package:hive/hive.dart';
 import 'package:poultry_manager/data/models/bird_modification.dart';
 import 'package:poultry_manager/data/models/dialy_feeding.dart';
 import 'package:poultry_manager/data/models/doctor_check.dart';
 import 'package:poultry_manager/data/models/weight_record.dart';
 
+
+@HiveType(typeId: 12) 
 class Flock {
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final String birdType;
+  @HiveField(2)
   final String name;
+  @HiveField(3)
   final int count;
+  @HiveField(4)
   final String flockType;
+  @HiveField(5)
   final String supplier;
+  @HiveField(6)
   final List<String> fortifications;
+  @HiveField(7)
   final double oneBirdCost;
+  @HiveField(8)
   final double income;
+  @HiveField(9)
   final double expense;
+  @HiveField(10)
   final String paidTo;
+  @HiveField(11)
   final String paymentMethod;
+  @HiveField(12)
   final DateTime date;
+  @HiveField(13)
   final String notes;
+  @HiveField(14)
   List<BirdModification> modifications;
+  @HiveField(15)
   List<DailyFeeding> feedingRecords;
+  @HiveField(16)
   List<WeightRecord> weightRecords;
+  @HiveField(17)
   List<DoctorCheck> doctorChecks;
 
 
@@ -218,3 +240,56 @@ class Flock {
     );
   }
 }
+
+class FlockAdapter extends TypeAdapter<Flock> {
+  @override
+  final int typeId = 12;
+
+  @override
+  Flock read(BinaryReader reader) {
+    return Flock(
+      id: reader.readString(),
+      birdType: reader.readString(),
+      name: reader.readString(),
+      count: reader.readInt(),
+      flockType: reader.readString(),
+      supplier: reader.readString(),
+      fortifications: reader.readList().cast<String>(),
+      oneBirdCost: reader.readDouble(),
+      income: reader.readDouble(),
+      expense: reader.readDouble(),
+      paidTo: reader.readString(),
+      paymentMethod: reader.readString(),
+      date: DateTime.parse(reader.readString()),
+      notes: reader.readString(),
+      modifications: reader.readList().cast<BirdModification>(),
+      feedingRecords: reader.readList().cast<DailyFeeding>(),
+      weightRecords: reader.readList().cast<WeightRecord>(),
+      doctorChecks: reader.readList().cast<DoctorCheck>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Flock obj) {
+    writer
+      ..writeString(obj.id)
+      ..writeString(obj.birdType)
+      ..writeString(obj.name)
+      ..writeInt(obj.count)
+      ..writeString(obj.flockType)
+      ..writeString(obj.supplier)
+      ..writeList(obj.fortifications)
+      ..writeDouble(obj.oneBirdCost)
+      ..writeDouble(obj.income)
+      ..writeDouble(obj.expense)
+      ..writeString(obj.paidTo)
+      ..writeString(obj.paymentMethod)
+      ..writeString(obj.date.toIso8601String())
+      ..writeString(obj.notes)
+      ..writeList(obj.modifications)
+      ..writeList(obj.feedingRecords)
+      ..writeList(obj.weightRecords)
+      ..writeList(obj.doctorChecks);
+  }
+}
+
